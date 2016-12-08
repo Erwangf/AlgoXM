@@ -9,9 +9,8 @@ et de programmation avancée du Master 1 Informatique de l'Université de Lyon 2
 
 ## Installation
 
-1) Mettre à jour les dépendances Maven
-
-2) C'est à peu près tout...
+1. Mettre à jour les dépendances Maven
+2. C'est à peu près tout...
 
 ## Technologies utilisées
 
