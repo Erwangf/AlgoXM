@@ -1,12 +1,11 @@
-package view;
+package model;
 
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Article implements Comparable<Article> {
+public class Article {
 
     private String title;
     private String description;
@@ -19,8 +18,6 @@ public class Article implements Comparable<Article> {
     public Article() {
 
     }
-
-    ;
 
     public Article(String title, String description, Date date, String rss, String author, URL link, int inter) {
         this.title = title;
@@ -54,15 +51,16 @@ public class Article implements Comparable<Article> {
                 '}';
     }
 
-    public int compareTo(Article a) {
-        return this.title.compareTo(a.title);
-    }
-
 
     // GETTERS & SETTERS
 
     public String getTitle() {
         return title;
+    }
+
+    public String getFormattedTitle() {
+        if (title == null) return "-";
+        else return title;
     }
 
     public void setTitle(String title) {
@@ -73,12 +71,24 @@ public class Article implements Comparable<Article> {
         return description;
     }
 
+    public String getFormattedDescription() {
+        if (description == null) {
+            return "";
+        } else return description;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
 
     public Date getDate() {
         return date;
+    }
+
+    public String getFormattedDate() {
+        if (date == null) {
+            return "Date inconnue";
+        } else return date.toString();
     }
 
     public void setDate(Date date) {
@@ -88,6 +98,7 @@ public class Article implements Comparable<Article> {
     /**
      * Set the date of the article from a String
      * //TODO Tester
+     *
      * @param strDate
      */
     public void setDate(String strDate) {
@@ -104,12 +115,24 @@ public class Article implements Comparable<Article> {
         return rss;
     }
 
+    public String getFormattedRss() {
+        if (rss == null) {
+            return "";
+        } else return rss;
+
+    }
+
     public void setRss(String rss) {
         this.rss = rss;
     }
 
     public String getAuthor() {
         return author;
+    }
+
+    public String getFormattedAuthor() {
+        if (author == null) return "Auteur inconnu";
+        else return author;
     }
 
     public void setAuthor(String author) {
@@ -120,11 +143,20 @@ public class Article implements Comparable<Article> {
         return link;
     }
 
+    public String getFormattedLink() {
+        if(link==null) return "Pas de lien";
+        else return link.toString();
+    }
+
     public void setLink(URL link) {
         this.link = link;
     }
 
     public int getInter() {
+        return inter;
+    }
+
+    public int getFormattedInter() {
         return inter;
     }
 
