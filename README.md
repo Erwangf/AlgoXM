@@ -32,8 +32,8 @@ Etudiants de la promo 2016-2017 du M1 Informatique de Lyon 2 :
 
 ## TODO :
 
--[x] Création répertoire Git
--[ ] Modèle simple à développer
+- [x] Création répertoire Git
+- [ ] Modèle simple à développer
 
 
 ## Historique
