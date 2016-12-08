@@ -1,7 +1,7 @@
 <img src="./images/logo-lyon2.png" width=100 align=right>
 <br>
 
-# Algo_2
+# AlgoXM
 
 
 Algo_2 est un projet de visualisation d'articles, ayant pour contexte le cours d'Algorithme
