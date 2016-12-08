@@ -1,4 +1,4 @@
-<img src="./images/logo-lyon2.png" width=100 style="float:right;">
+<img src="./images/logo-lyon2.png" width=100 align=right>
 <br>
 
 # Algo_2
