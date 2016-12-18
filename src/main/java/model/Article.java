@@ -1,8 +1,6 @@
 package model;
 
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.Date;
 
 public class Article {
@@ -14,6 +12,7 @@ public class Article {
     private String author;
     private URL link;
     private int inter;
+    private String access;
 
     public Article() {
 
@@ -58,23 +57,12 @@ public class Article {
         return title;
     }
 
-    public String getFormattedTitle() {
-        if (title == null) return "-";
-        else return title;
-    }
-
     public void setTitle(String title) {
         this.title = title;
     }
 
     public String getDescription() {
         return description;
-    }
-
-    public String getFormattedDescription() {
-        if (description == null) {
-            return "";
-        } else return description;
     }
 
     public void setDescription(String description) {
@@ -85,41 +73,12 @@ public class Article {
         return date;
     }
 
-    public String getFormattedDate() {
-        if (date == null) {
-            return "Date inconnue";
-        } else return date.toString();
-    }
-
     public void setDate(Date date) {
         this.date = date;
     }
 
-    /**
-     * Set the date of the article from a String
-     * //TODO Tester
-     *
-     * @param strDate
-     */
-    public void setDate(String strDate) {
-        DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-
-        try {
-            this.date = shortDateFormat.parse(strDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-    }
-
     public String getRss() {
         return rss;
-    }
-
-    public String getFormattedRss() {
-        if (rss == null) {
-            return "";
-        } else return rss;
-
     }
 
     public void setRss(String rss) {
@@ -130,22 +89,12 @@ public class Article {
         return author;
     }
 
-    public String getFormattedAuthor() {
-        if (author == null) return "Auteur inconnu";
-        else return author;
-    }
-
     public void setAuthor(String author) {
         this.author = author;
     }
 
     public URL getLink() {
         return link;
-    }
-
-    public String getFormattedLink() {
-        if(link==null) return "Pas de lien";
-        else return link.toString();
     }
 
     public void setLink(URL link) {
@@ -156,13 +105,16 @@ public class Article {
         return inter;
     }
 
-    public int getFormattedInter() {
-        return inter;
-    }
-
     public void setInter(int inter) {
         this.inter = inter;
     }
 
+    public String getAccess() {
+        if(access==null) return "ALL";
+        else return access;
+    }
 
+    public void setAccess(String access) {
+        this.access = access;
+    }
 }
