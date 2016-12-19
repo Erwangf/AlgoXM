@@ -1,14 +1,12 @@
 package model;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.LongPoint;
-import org.apache.lucene.document.TextField;
+import org.apache.lucene.document.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Created by Erwan on 19/12/2016.
@@ -16,8 +14,10 @@ import java.util.Date;
 public class Article {
 
     private Document doc;
+    private String ID;
 
     public Article(String title, String description, Date date, String rss, String author, URL link){
+        ID = UUID.randomUUID().toString();
         doc = new Document();
 
         doc.add(new TextField("title",title, Field.Store.YES));
@@ -30,6 +30,7 @@ public class Article {
 
         //link stocké sous forme de texte
         doc.add(new TextField("link", link.toString(), Field.Store.YES));
+        doc.add(new StringField("ID",ID,Field.Store.YES));
     }
 
     // GETTERS & SETTERS
@@ -168,5 +169,9 @@ public class Article {
         }
 
         return l;
+    }
+
+    public String getID() {
+        return ID;
     }
 }
