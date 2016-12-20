@@ -1,7 +1,10 @@
 package model;
 
+import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.document.*;
-import org.apache.lucene.index.IndexableField;
+import org.apache.lucene.index.DocValuesType;
+import org.apache.lucene.index.IndexOptions;
+import org.apache.lucene.util.BytesRef;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,6 +16,7 @@ import java.util.UUID;
  * Created by Erwan on 19/12/2016.
  */
 public class Article {
+
 
 
 
@@ -112,9 +116,18 @@ public class Article {
         return this.title;
     }
 
+
+    private static final FieldType BiLongField = new FieldType(StringField.TYPE_STORED);
+
+    static {
+        BiLongField.setDocValuesType(DocValuesType.NUMERIC);
+        BiLongField.freeze();
+    }
+
+
     public Document toDocument() {
         Document doc = new Document();
-
+        // 1 : Champs indexables (TextField, LongPoint, StringField)
         doc.add(new TextField(ArticleAttributes.TITLE,title, Field.Store.YES));
         doc.add(new TextField(ArticleAttributes.DESCRIPTION, description, Field.Store.YES));
         doc.add(new TextField(ArticleAttributes.RSS, rss, Field.Store.YES));
@@ -126,6 +139,13 @@ public class Article {
         //link stocké sous forme de texte
         doc.add(new TextField(ArticleAttributes.LINK, link.toString(), Field.Store.YES));
         doc.add(new StringField(ArticleAttributes.ID,ID,Field.Store.YES));
+
+
+        // 2 : champs triables (Sorted[Fields...])
+        doc.add(new SortedDocValuesField(SortableAttributes.TITLE, new BytesRef(title)));
+        doc.add(new SortedDocValuesField(SortableAttributes.AUTHOR, new BytesRef(author)));
+        doc.add(new SortedNumericDocValuesField(SortableAttributes.DATE, date.getTime()));
+
         return doc;
     }
 
@@ -180,4 +200,6 @@ public class Article {
     public String getID() {
         return ID;
     }
+
+
 }
