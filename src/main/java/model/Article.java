@@ -115,17 +115,17 @@ public class Article {
     public Document toDocument() {
         Document doc = new Document();
 
-        doc.add(new TextField(ArticleAttributes.TITLE.toString(),title, Field.Store.YES));
-        doc.add(new TextField(ArticleAttributes.DESCRIPTION.toString(), description, Field.Store.YES));
-        doc.add(new TextField(ArticleAttributes.RSS.toString(), rss, Field.Store.YES));
-        doc.add(new TextField(ArticleAttributes.AUTHOR.toString(), author, Field.Store.YES));
+        doc.add(new TextField(ArticleAttributes.TITLE,title, Field.Store.YES));
+        doc.add(new TextField(ArticleAttributes.DESCRIPTION, description, Field.Store.YES));
+        doc.add(new TextField(ArticleAttributes.RSS, rss, Field.Store.YES));
+        doc.add(new TextField(ArticleAttributes.AUTHOR, author, Field.Store.YES));
 
         //date stockée en millisecondes (getTime)
-        doc.add(new LongPoint(ArticleAttributes.DATE.toString(), date.getTime()));
+        doc.add(new LongPoint(ArticleAttributes.DATE, date.getTime()));
 
         //link stocké sous forme de texte
-        doc.add(new TextField(ArticleAttributes.LINK.toString(), link.toString(), Field.Store.YES));
-        doc.add(new StringField(ArticleAttributes.ID.toString(),ID,Field.Store.YES));
+        doc.add(new TextField(ArticleAttributes.LINK, link.toString(), Field.Store.YES));
+        doc.add(new StringField(ArticleAttributes.ID,ID,Field.Store.YES));
         return doc;
     }
 

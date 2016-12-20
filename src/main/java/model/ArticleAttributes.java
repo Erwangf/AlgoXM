@@ -3,24 +3,13 @@ package model;
 /**
  * Created by Erwan on 20/12/2016.
  */
-public enum ArticleAttributes {
+public class ArticleAttributes {
 
-    TITLE("title"),
-    DESCRIPTION("description"),
-    AUTHOR("author"),
-    DATE("date"),
-    RSS("rss"),
-    LINK("link"),
-    ID("ID");
-
-    private final String name;
-
-    ArticleAttributes(String name){
-        this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return name;
-    }
+    public static final String TITLE = "title";
+    public static final String DESCRIPTION = "description";
+    public static final String AUTHOR = "author";
+    public static final String DATE = "date";
+    public static final String RSS = "rss";
+    public static final String LINK = "link";
+    public static final String ID = "ID";
 }
