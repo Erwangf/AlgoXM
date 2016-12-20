@@ -14,6 +14,8 @@ import java.util.UUID;
  */
 public class Article {
 
+
+
     private String title;
     private String description;
     private Date date;
@@ -113,17 +115,17 @@ public class Article {
     public Document toDocument() {
         Document doc = new Document();
 
-        doc.add(new TextField("title",title, Field.Store.YES));
-        doc.add(new TextField("description", description, Field.Store.YES));
-        doc.add(new TextField("rss", rss, Field.Store.YES));
-        doc.add(new TextField("author", author, Field.Store.YES));
+        doc.add(new TextField(ArticleAttributes.TITLE.toString(),title, Field.Store.YES));
+        doc.add(new TextField(ArticleAttributes.DESCRIPTION.toString(), description, Field.Store.YES));
+        doc.add(new TextField(ArticleAttributes.RSS.toString(), rss, Field.Store.YES));
+        doc.add(new TextField(ArticleAttributes.AUTHOR.toString(), author, Field.Store.YES));
 
         //date stockée en millisecondes (getTime)
-        doc.add(new LongPoint("date", date.getTime()));
+        doc.add(new LongPoint(ArticleAttributes.DATE.toString(), date.getTime()));
 
         //link stocké sous forme de texte
-        doc.add(new TextField("link", link.toString(), Field.Store.YES));
-        doc.add(new StringField("ID",ID,Field.Store.YES));
+        doc.add(new TextField(ArticleAttributes.LINK.toString(), link.toString(), Field.Store.YES));
+        doc.add(new StringField(ArticleAttributes.ID.toString(),ID,Field.Store.YES));
         return doc;
     }
 
