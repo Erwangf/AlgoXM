@@ -1,6 +1,7 @@
 package model;
 
 import org.apache.lucene.document.*;
+import org.apache.lucene.index.IndexableField;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,91 +14,24 @@ import java.util.UUID;
  */
 public class Article {
 
-    private Document doc;
+    private String title;
+    private String description;
+    private Date date;
+    private String rss;
+    private String author;
+    private URL link;
     private String ID;
 
     public Article(String title, String description, Date date, String rss, String author, URL link){
         ID = UUID.randomUUID().toString();
-        doc = new Document();
-
-        doc.add(new TextField("title",title, Field.Store.YES));
-        doc.add(new TextField("description", description, Field.Store.YES));
-        doc.add(new TextField("rss", rss, Field.Store.YES));
-        doc.add(new TextField("author", author, Field.Store.YES));
-
-        //date stockée en millisecondes (getTime)
-        doc.add(new LongPoint("date", date.getTime()));
-
-        //link stocké sous forme de texte
-        doc.add(new TextField("link", link.toString(), Field.Store.YES));
-        doc.add(new StringField("ID",ID,Field.Store.YES));
+        this.title = title;
+        this.description = description;
+        this.date = date;
+        this.rss = rss;
+        this.author = author;
+        this.link = link;
     }
 
-    // GETTERS & SETTERS
-
-    public String getTitle() {
-        return doc.get("title");
-    }
-
-    public void setTitle(String title) {
-        doc.removeField("title");
-        doc.add(new TextField("title",title, Field.Store.YES));
-    }
-
-    public String getDescription() {
-        return doc.get("description");
-    }
-
-    public void setDescription(String description) {
-        doc.removeField("description");
-        doc.add(new TextField("description",description, Field.Store.YES));
-    }
-
-    public Date getDate() {
-        return new Date(Long.parseLong(doc.get("date")));
-    }
-
-    public void setDate(Date date) {
-        doc.removeField("date");
-        doc.add(new LongPoint("date",date.getTime()));
-    }
-
-    public String getRss() {
-        return doc.get("rss");
-    }
-
-    public void setRss(String rss) {
-        doc.removeField("rss");
-        doc.add(new TextField("rss",rss, Field.Store.YES));
-    }
-
-    public String getAuthor() {
-        return doc.get("author");
-    }
-
-    public void setAuthor(String author) {
-        doc.removeField("author");
-        doc.add(new TextField("author",author, Field.Store.YES));
-    }
-
-    public URL getLink() {
-        URL result = null;
-        try {
-            result =  new URL(doc.get("link"));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public void setLink(URL link) {
-        doc.removeField("link");
-        doc.add(new TextField("link",link.toString(), Field.Store.YES));
-    }
-
-    public Document getDocument(){
-        return doc;
-    }
 
     public static ArrayList<Article> getDefaultArticles() {
         ArrayList<Article> l = new ArrayList<Article>();
@@ -169,6 +103,76 @@ public class Article {
         }
 
         return l;
+    }
+
+    @Override
+    public String toString() {
+        return this.title;
+    }
+
+    public Document toDocument() {
+        Document doc = new Document();
+
+        doc.add(new TextField("title",title, Field.Store.YES));
+        doc.add(new TextField("description", description, Field.Store.YES));
+        doc.add(new TextField("rss", rss, Field.Store.YES));
+        doc.add(new TextField("author", author, Field.Store.YES));
+
+        //date stockée en millisecondes (getTime)
+        doc.add(new LongPoint("date", date.getTime()));
+
+        //link stocké sous forme de texte
+        doc.add(new TextField("link", link.toString(), Field.Store.YES));
+        doc.add(new StringField("ID",ID,Field.Store.YES));
+        return doc;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public String getRss() {
+        return rss;
+    }
+
+    public void setRss(String rss) {
+        this.rss = rss;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public URL getLink() {
+        return link;
+    }
+
+    public void setLink(URL link) {
+        this.link = link;
     }
 
     public String getID() {
