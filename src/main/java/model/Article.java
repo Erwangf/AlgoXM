@@ -32,7 +32,8 @@ public class Article {
     }
 
     public Article(Document d) {
-        this.title = d.get(ArticleAttributes.ID);
+
+        this.ID = d.get(ArticleAttributes.ID);
         this.title = d.get(ArticleAttributes.TITLE);
         this.description = d.get(ArticleAttributes.DESCRIPTION);
         this.date = new Date(Long.parseLong(d.get(ArticleAttributes.DATE)));
@@ -122,6 +123,7 @@ public class Article {
     @Override
     public String toString() {
         return "Title = "+title+"\n"+
+                "ID = "+ID+"\n"+
                 "Author = "+author+"\n"+
                 "Date = "+date+"\n"+
                 "RSS = "+rss+"\n"+

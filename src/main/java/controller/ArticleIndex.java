@@ -55,6 +55,38 @@ public class ArticleIndex{
             System.out.println(article);
         }
 
+        System.out.println("4) On va supprimer l'article de Tom Jedusort ( le premier trouvé )");
+        //4) On va supprimer l'article de Tom Jedusort ( le premier trouvé )
+        termValueMap = new LinkedHashMap<>();
+        termValueMap.put(ArticleAttributes.AUTHOR,"Tom Jedusort");
+        Article articleASupprimer = indx.searchByTerms(termValueMap,1).get(0);
+        indx.removeArticle(articleASupprimer.getID());
+        System.out.println("Articles restants : ");
+
+        for(Article article : indx.getAllArticles()){
+            System.out.println(article);
+        }
+
+        //5) Supposons que Mario Velazio se marie, et prenne le nom de sa femme, Françoise Nette
+        System.out.println("5) Supposons que Mario Velazio se marie, et prenne le nom de sa femme, Françoise Nette");
+        // 5.1 : On récupère les articles de Mario Velazio
+        termValueMap = new LinkedHashMap<>();
+        termValueMap.put(ArticleAttributes.AUTHOR,"Mario Velazio");
+        ArrayList<Article> articlesDeMario = indx.searchByTerms(termValueMap,1000);
+        for(Article article : articlesDeMario){
+            // 5.2 pour chaque article, on modifie l'article, et on met à jour l'index
+            article.setAuthor("Mario Nette"); //quel humour !
+            String ID = article.getID();
+            indx.updateArticle(ID,article);
+        }
+
+        System.out.println("Articles restants : ");
+
+        for(Article article : indx.getAllArticles()){
+            System.out.println(article);
+        }
+
+
     }
 
 
@@ -75,6 +107,16 @@ public class ArticleIndex{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<Article> getAllArticles(){
+        try {
+            return search("*:*",1000000);
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     public ArrayList<Article> search(String queryStr, int n, String sortTerm, boolean ascending) throws IOException, ParseException {
@@ -196,6 +238,7 @@ public class ArticleIndex{
     }
 
     public void removeArticle(String ID) {
+
 
         try {
             indexWriter.deleteDocuments(new Term("ID", ID));
