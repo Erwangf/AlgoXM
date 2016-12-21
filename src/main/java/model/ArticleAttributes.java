@@ -1,8 +1,5 @@
 package model;
 
-/**
- * Created by Erwan on 20/12/2016.
- */
 public class ArticleAttributes {
 
     public static final String TITLE = "title";

@@ -1,20 +1,13 @@
 package model;
 
-import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.document.*;
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.util.BytesRef;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
-/**
- * Created by Erwan on 19/12/2016.
- */
 public class Article {
 
 
@@ -55,7 +48,7 @@ public class Article {
 
 
     public static ArrayList<Article> getDefaultArticles() {
-        ArrayList<Article> l = new ArrayList<Article>();
+        ArrayList<Article> l = new ArrayList<>();
 
         try {
 
