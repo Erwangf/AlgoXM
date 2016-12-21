@@ -167,7 +167,6 @@ public class ArticleIndex implements Iterable<Article> {
     public void addArticle(Article a) {
         hashMap.put(a.getID(), a);
         try {
-            System.out.println(a.getAuthor());
             indexWriter.addDocument(a.toDocument());
             indexWriter.commit();
         } catch (IOException e) {
