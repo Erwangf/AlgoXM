@@ -113,16 +113,14 @@ public class Article {
 
     @Override
     public String toString() {
-        return this.title;
+        return "Title = "+title+"\n"+
+                "Author = "+author+"\n"+
+                "Date = "+date+"\n"+
+                "RSS = "+rss+"\n"+
+                "link = "+link.toString()+"\n"+
+                "Description = "+(description.length()>128?description.substring(0,128)+"...":description)+"\n";
     }
 
-
-    private static final FieldType BiLongField = new FieldType(StringField.TYPE_STORED);
-
-    static {
-        BiLongField.setDocValuesType(DocValuesType.NUMERIC);
-        BiLongField.freeze();
-    }
 
 
     public Document toDocument() {
