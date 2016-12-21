@@ -15,8 +15,7 @@ import org.apache.lucene.store.RAMDirectory;
 import java.io.IOException;
 import java.util.*;
 
-public class ArticleIndex implements Iterable<Article> {
-    private LinkedHashMap<String, Article> hashMap;
+public class ArticleIndex{
     private Directory index;
     private IndexWriterConfig config;
     private StandardAnalyzer analyzer;
@@ -27,7 +26,7 @@ public class ArticleIndex implements Iterable<Article> {
         ArticleIndex indx = new ArticleIndex();
 
         indx.addArticles(Article.getDefaultArticles()); //On ajoute des article à l'index
-        System.out.println("1)");
+        System.out.println("1) on recherche les 2 premiers articles qui ont dans leur description la chaine \"la\"");
         // 1) on recherche les 2 premiers articles qui ont dans leur description la chaine "la"
         ArrayList<Article> result = indx.search(ArticleAttributes.DESCRIPTION + ":la", 2);
 
@@ -36,7 +35,7 @@ public class ArticleIndex implements Iterable<Article> {
             System.out.println(article);
         }
 
-        System.out.println("2)");
+        System.out.println("2) même chose, mais avec searchByTerms :");
         //2) même chose, mais avec searchByTerms :
         LinkedHashMap<String, String> termValueMap = new LinkedHashMap<>(); // HashMap <terme,valeur>
 
@@ -49,7 +48,7 @@ public class ArticleIndex implements Iterable<Article> {
         for (Article article : result2) {
             System.out.println(article);
         }
-        System.out.println("3)");
+        System.out.println("3) Effectuons la même recherche, mais on trie les résultats par auteur, par ordre alphabétique descendant");
         // 3) Effectuons la même recherche, mais on trie les résultats par auteur, par ordre alphabétique descendant
         ArrayList<Article> result3 = indx.searchByTerms(termValueMap,2,SortableAttributes.AUTHOR,false);
         for(Article article : result3){
@@ -60,7 +59,6 @@ public class ArticleIndex implements Iterable<Article> {
 
 
     public ArticleIndex() {
-        hashMap = new LinkedHashMap<>();
 
         // 1. On spécifie un analyzer
         analyzer = new StandardAnalyzer();
@@ -114,7 +112,7 @@ public class ArticleIndex implements Iterable<Article> {
         ArrayList<Article> result = new ArrayList<>();
         for (ScoreDoc hit : hits) {
             Document d = searcher.doc(hit.doc);
-            result.add(hashMap.get(d.get(ArticleAttributes.ID)));
+            result.add(new Article(d));
         }
         return result;
     }
@@ -161,11 +159,17 @@ public class ArticleIndex implements Iterable<Article> {
 
 
     public Article getArticleByID(String ID) {
-        return hashMap.get(ID);
+        //return hashMap.get(ID);
+        try {
+            return search(ArticleAttributes.ID+":"+ID,1).get(0);
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void addArticle(Article a) {
-        hashMap.put(a.getID(), a);
+        //hashMap.put(a.getID(), a);
         try {
             indexWriter.addDocument(a.toDocument());
             indexWriter.commit();
@@ -189,18 +193,9 @@ public class ArticleIndex implements Iterable<Article> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        if (a.getID().equals(ID)) {
-            hashMap.put(ID, a);
-        } else {
-            hashMap.remove(ID);
-            hashMap.put(a.getID(), a);
-        }
     }
 
     public void removeArticle(String ID) {
-
-        hashMap.remove(ID);
 
         try {
             indexWriter.deleteDocuments(new Term("ID", ID));
@@ -211,15 +206,14 @@ public class ArticleIndex implements Iterable<Article> {
         }
     }
 
-    public void dropAll() {
-        hashMap.clear();
+    public void dropAll(){
+        try {
+            indexWriter.deleteAll();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    public Iterator<Article> iterator() {
-        return hashMap.values().iterator();
-    }
 
-    public Collection<Article> getAllArticles() {
-        return hashMap.values();
-    }
 }

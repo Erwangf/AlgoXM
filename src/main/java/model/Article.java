@@ -38,6 +38,21 @@ public class Article {
         this.link = link;
     }
 
+    public Article(Document d) {
+        this.title = d.get(ArticleAttributes.ID);
+        this.title = d.get(ArticleAttributes.TITLE);
+        this.description = d.get(ArticleAttributes.DESCRIPTION);
+        this.date = new Date(Long.parseLong(d.get(ArticleAttributes.DATE)));
+        this.rss = d.get(ArticleAttributes.RSS);
+        this.author = d.get(ArticleAttributes.AUTHOR);
+        try {
+            this.link = new URL(d.get(ArticleAttributes.LINK));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     public static ArrayList<Article> getDefaultArticles() {
         ArrayList<Article> l = new ArrayList<Article>();
@@ -132,7 +147,7 @@ public class Article {
         doc.add(new TextField(ArticleAttributes.AUTHOR, author, Field.Store.YES));
 
         //date stockée en millisecondes (getTime)
-        doc.add(new LongPoint(ArticleAttributes.DATE, date.getTime()));
+        doc.add(new StoredField(ArticleAttributes.DATE, date.getTime()));
 
         //link stocké sous forme de texte
         doc.add(new TextField(ArticleAttributes.LINK, link.toString(), Field.Store.YES));
