@@ -19,10 +19,19 @@ public class Article {
     private String rss;
     private String author;
     private URL link;
-    private String ID;
+    private final String ID; // l'identifiant d'un article ne peut pas être modifié
 
+    /**
+     * Construit un Article à partir de champs
+     * @param title Le Titre de l'article
+     * @param description La description ( contenu ) de l'article
+     * @param date La date de l'article
+     * @param rss Le flux RSS de l'article
+     * @param author L'auteur de l'article
+     * @param link L'URL vers l'article
+     */
     public Article(String title, String description, Date date, String rss, String author, URL link){
-        ID = UUID.randomUUID().toString();
+        ID = UUID.randomUUID().toString(); //création d'un identifiant unique et aléatoire pour l'objet créé.
         this.title = title;
         this.description = description;
         this.date = date;
@@ -31,6 +40,10 @@ public class Article {
         this.link = link;
     }
 
+    /**
+     * Construit un Article à partir d'un Document Lucene
+     * @param d Un document Lucene
+     */
     public Article(Document d) {
 
         this.ID = d.get(ArticleAttributes.ID);
@@ -44,10 +57,12 @@ public class Article {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-
     }
 
-
+    /**
+     * Fourni une liste d'articles par défaut
+     * @return Une liste d'articles par défaut
+     */
     public static ArrayList<Article> getDefaultArticles() {
         ArrayList<Article> l = new ArrayList<>();
 
@@ -132,7 +147,10 @@ public class Article {
     }
 
 
-
+    /**
+     * Construit un document à partir de l'article actuel
+     * @return Le document correspondant à l'Article
+     */
     public Document toDocument() {
         Document doc = new Document();
         // 1 : Champs indexables (TextField, LongPoint, StringField)
@@ -157,6 +175,7 @@ public class Article {
         return doc;
     }
 
+    // =============== GETTERS & SETTERS =================
     public String getTitle() {
         return title;
     }
@@ -208,6 +227,5 @@ public class Article {
     public String getID() {
         return ID;
     }
-
 
 }

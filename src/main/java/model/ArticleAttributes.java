@@ -1,5 +1,8 @@
 package model;
 
+/**
+ * Classe à l'usage statique, contenant les attributs des Documents Lucene générés à partir des objets Article
+ */
 public class ArticleAttributes {
 
     public static final String TITLE = "title";
