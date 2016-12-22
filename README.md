@@ -1,7 +1,7 @@
 <img src="./images/logo-lyon2.png" width=100 align=right>
 <br>
 
-# AlgoXM
+# AlgoXM v0.2
 
 
 Algo_2 est un projet de visualisation d'articles, ayant pour contexte le cours d'Algorithme
@@ -19,6 +19,7 @@ et de programmation avancée du Master 1 Informatique de l'Université de Lyon 2
 - Test Driven Development
 - JUnit
 - Maven
+- Lucene
 
 
 
@@ -39,5 +40,7 @@ Etudiants de la promo 2016-2017 du M1 Informatique de Lyon 2 :
 ## Historique
 
 - V0 : Initialisation du projet
+- V0.1 : Modèle (MVC) OK
+- V0.2 : Contrôleur : Tri + Filtre OK
 
 
