@@ -126,12 +126,12 @@ public class IOController {
 	}
     
     
-    
+    /*
     public static void main(String[] args) {
     	// System.out.println(readFile(pathTest));
     	writeToCSV(readFile(pathTest), "E:/MASTER/JAVA/PROJET/data/test1.csv");
     }
- 
+     */
         
     /*	test format de date
      
