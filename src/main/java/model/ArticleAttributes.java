@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Created by Erwan on 20/12/2016.
+ * Classe à l'usage statique, contenant les attributs des Documents Lucene générés à partir des objets Article
  */
 public class ArticleAttributes {
 
