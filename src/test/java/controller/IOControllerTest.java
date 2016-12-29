@@ -4,7 +4,6 @@ import model.Article;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 
 
@@ -19,9 +18,9 @@ public class IOControllerTest {
     @Test
     public void testImportOneLineToString(){
 
-        InputStream fileIR = this.getClass().getResourceAsStream("abc.xml");
+        String path = this.getClass().getResource("test_one_line.csv").getPath();
 
-        ArrayList<Article> result = IOController.importCSV(fileIR);
+        ArrayList<Article> result = IOController.readFile(path);
 
         Assert.assertNotNull("Le résultat ne devrait pas être null",result);
         Article a = result.get(0);
