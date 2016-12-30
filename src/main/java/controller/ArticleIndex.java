@@ -11,6 +11,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.util.BytesRef;
 
 import java.io.IOException;
 import java.util.*;
@@ -346,5 +347,59 @@ public class ArticleIndex{
         }
     }
 
+    
+    /**
+     * renvoie le nombre de document indexés
+     * @return un entier
+     * @throws IOException  En cas d'erreur avec l'Index
+     */
+    public int getNbDoc() throws IOException {
+
+        IndexReader reader = DirectoryReader.open(index);
+        return  reader.getDocCount("title");
+        
+    }
+    
+    /**
+     * renvoie le nombre moyen de mots par article
+     * @return un long
+     * @throws IOException  En cas d'erreur avec l'Index
+     */
+    public long getAvgNbWords() throws IOException {
+
+        IndexReader reader = DirectoryReader.open(index);
+        return  reader.getSumTotalTermFreq("description") / new Long (reader.getDocCount("description"));
+        
+    }
+    
+    /* renvoie toujours 0 ?_?
+    public int getNbDocTerm(Term term) throws IOException {
+
+        IndexReader reader = DirectoryReader.open(index);
+        return  reader.docFreq(term);
+        
+    }
+    */
+    
+    /* idem
+    public void readingIndex() throws IOException {
+    	IndexReader reader = DirectoryReader.open(index);
+    	
+        String term = "a";
+
+        	Term termInstance = new Term("description", term);                              
+        	long termFreq = reader.totalTermFreq(termInstance);
+        	long docCount = reader.docFreq(termInstance);
+
+        	System.out.println("term: "+term+", termFreq = "+termFreq+", docCount = "+docCount);  
+                   
+        reader.close();     
+    }
+    */
+
+    
+    
+    
+    
 
 }
