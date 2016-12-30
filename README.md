@@ -1,10 +1,10 @@
 <img src="./images/logo-lyon2.png" width=100 align=right>
 <br>
 
-# AlgoXM v0.2
+# AlgoXM v0.3
 
 
-Algo_2 est un projet de visualisation d'articles, ayant pour contexte le cours d'Algorithme
+AlgoXM est un projet de visualisation d'articles, ayant pour contexte le cours d'Algorithme
 et de programmation avancée du Master 1 Informatique de l'Université de Lyon 2 (2016-2017)
 
 ## Installation
@@ -34,13 +34,20 @@ Etudiants de la promo 2016-2017 du M1 Informatique de Lyon 2 :
 ## TODO :
 
 - [x] Création répertoire Git
-- [ ] Modèle simple à développer
+- [x] Modèle simple à développer
+- [x] Vue à développer
+- [ ] Connection Contrôleur - Vue
+- [ ] Stats simples
+- [ ] Stats avancées
+- [ ] Nuage de mots
+- [ ] Procédure d'import résistante à l'erreur
 
 
 ## Historique
 
 - V0 : Initialisation du projet
-- V0.1 : Modèle (MVC) OK
-- V0.2 : Contrôleur : Tri + Filtre OK
+- V0.1 : Modèle (MVC)
+- V0.2 : Contrôleur : Tri + Filtre
+- V0.3 : Vue : base
 
 

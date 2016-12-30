@@ -18,10 +18,7 @@ public class Main {
         AI.addArticles(list);
         System.out.println("Articles ajoutés !");
         ArrayList<Article> l1 = AI.search("title:Paris",200);
-        for(Article a : l1){
-            System.out.println(a);
-        }
-        IOController.writeToCSV(l1,"./data/result.csv");
+        l1.forEach(System.out::println);
 
     }
 }
