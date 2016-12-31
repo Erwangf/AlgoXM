@@ -9,6 +9,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import model.Article;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 
 public class ArticleListPane extends GridPane {
 
@@ -48,14 +51,34 @@ public class ArticleListPane extends GridPane {
                 linkColumn
         );
 
-        list = FXCollections.observableList(Article.getDefaultArticles());
+        list = FXCollections.observableList(new ArrayList<Article>());
 
         tableView.setItems(list);
 
+        // TODO Delete initialization data
+        tableView.getItems().addAll(Article.getDefaultArticles());
 
         GridPane.setConstraints(tableView, 0, 1);
         GridPane.setHgrow(tableView, Priority.ALWAYS);
         GridPane.setVgrow(tableView, Priority.ALWAYS);
         this.getChildren().add(tableView);
+    }
+
+
+
+    public void add(Article a){
+        tableView.getItems().add(a);
+    }
+
+    public void addAll(Collection<Article> ac){
+        tableView.getItems().addAll(ac);
+    }
+
+    public boolean remove(Article a){
+        return tableView.getItems().remove(a);
+    }
+
+    public void clear(){
+        tableView.getItems().clear();
     }
 }
