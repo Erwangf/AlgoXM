@@ -361,7 +361,7 @@ public class ArticleIndex{
     public int getNbDoc() throws IOException {
 
         IndexReader reader = DirectoryReader.open(index);
-        return  reader.getDocCount("title");
+        return  reader.getDocCount(ArticleAttributes.TITLE);
         
     }
     
@@ -373,7 +373,7 @@ public class ArticleIndex{
     public long getAvgNbWords() throws IOException {
 
         IndexReader reader = DirectoryReader.open(index);
-        return  reader.getSumTotalTermFreq("description") / new Long (reader.getDocCount("description"));
+        return  reader.getSumTotalTermFreq(ArticleAttributes.DESCRIPTION) / new Long (reader.getDocCount(ArticleAttributes.DESCRIPTION));
         
     }
     
@@ -438,7 +438,7 @@ public class ArticleIndex{
     
     for(int docNum=0; docNum<num_doc; docNum++){
   
-        Terms termVector = reader.getTermVector(docNum, "description");
+        Terms termVector = reader.getTermVector(docNum, ArticleAttributes.DESCRIPTION);
         TermsEnum itr = termVector.iterator();
         BytesRef term = null;
 
@@ -446,7 +446,7 @@ public class ArticleIndex{
         while((term = itr.next()) != null){
             try{
                 String termText = term.utf8ToString();
-                Term termInstance = new Term("description",term);
+                Term termInstance = new Term(ArticleAttributes.DESCRIPTION, term);
                 long termFreq = reader.totalTermFreq(termInstance);
 
                 tfm.put(termText, (int)termFreq);

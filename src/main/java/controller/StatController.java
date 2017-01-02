@@ -1,5 +1,6 @@
 package controller;
 
+import model.ArticleAttributes;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -22,8 +23,8 @@ public class StatController {
         AI.addArticles(list);
         System.out.println("Articles ajoutés !");
         
-        System.out.println(AI.getNbDocTerm(new Term("description", "comme")) );
-        System.out.println(AI.getFreqTerm(new Term("description", "comme")) );
+        System.out.println(AI.getNbDocTerm(new Term(ArticleAttributes.DESCRIPTION, "comme")) );
+        System.out.println(AI.getFreqTerm(new Term(ArticleAttributes.DESCRIPTION, "comme")) );
         System.out.println(AI.getTopFreq(5));
 
 	}
