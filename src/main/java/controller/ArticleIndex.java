@@ -11,9 +11,8 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.util.BytesRef;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
@@ -302,9 +301,7 @@ public class ArticleIndex{
      * @param c une collection d'articles
      */
     public void addArticles(Collection<Article> c) {
-        for (Article a : c) {
-            this.addArticle(a);
-        }
+        c.forEach(this::addArticle);
     }
 
     /**
@@ -349,9 +346,9 @@ public class ArticleIndex{
         }
     }
 
-    
-    /******************* PARTIE STATISTIQUES *******************/
-    
+
+    /* **************** PARTIE STATISTIQUES *******************/
+
     /**
      * renvoie le nombre de document indexés
      * @return un entier
@@ -372,16 +369,14 @@ public class ArticleIndex{
     public long getAvgNbWords() throws IOException {
 
         IndexReader reader = DirectoryReader.open(index);
-        return  reader.getSumTotalTermFreq(ArticleAttributes.DESCRIPTION) / new Long (reader.getDocCount(ArticleAttributes.DESCRIPTION));
+        return  reader.getSumTotalTermFreq(ArticleAttributes.DESCRIPTION) / (long) reader.getDocCount(ArticleAttributes.DESCRIPTION);
         
     }
 
     public ArrayList<Article> getDefaultResult() {
         try {
             return this.search("*:*",100);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
         return null;
@@ -414,7 +409,7 @@ public class ArticleIndex{
     
     /**
      * renvoie la liste des XX mots les plus fréquents avec leur fréquence d'apparition
-     * @param int top Le nombre de mots à récupérer
+     * @param top Le nombre de mots à récupérer
      * @return une liste Mot/fréquence 
      * @throws IOException  En cas d'erreur avec l'Index
      */
@@ -444,13 +439,13 @@ public class ArticleIndex{
     public Map<String, Integer> getAllFreq() throws IOException {
     IndexReader reader = DirectoryReader.open(index);
     int num_doc = reader.numDocs();
-    Map<String, Integer> tfm = new HashMap<String, Integer>();
+    Map<String, Integer> tfm = new HashMap<>();
     
     for(int docNum=0; docNum<num_doc; docNum++){
   
         Terms termVector = reader.getTermVector(docNum, ArticleAttributes.DESCRIPTION);
         TermsEnum itr = termVector.iterator();
-        BytesRef term = null;
+        BytesRef term;
 
   
         while((term = itr.next()) != null){
@@ -462,7 +457,7 @@ public class ArticleIndex{
                 tfm.put(termText, (int)termFreq);
                 
             }catch(Exception e){
-                System.out.println(e);
+                e.printStackTrace();
             }
         }        
     }
@@ -474,14 +469,13 @@ public class ArticleIndex{
     
     /**
      * transforme une liste triée en liste topée (les X premiers)
-     * @param une liste String,Integer et un int top le nombre d'entrées à garder
+     * @param fullList liste String,Integer
+     * @param top le nombre d'entrées à garder
      * @return une liste Mot/fréquence topée
      */
     public List<Entry<String, Integer>> doTop(List<Entry<String, Integer>> fullList, int top){
-    	
-    	List<Entry<String, Integer>> topX = new ArrayList<Entry<String, Integer>>(fullList.subList(0 , top));
-        
-        return  topX;
+
+        return new ArrayList<>(fullList.subList(0, top));
     }
     
      
