@@ -3,6 +3,8 @@ package controller;
 import model.Article;
 import model.ArticleAttributes;
 import model.SortableAttributes;
+
+import org.apache.lucene.analysis.fr.FrenchAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.*;
@@ -20,7 +22,7 @@ import java.util.Map.Entry;
 public class ArticleIndex{
     private Directory index;
     private IndexWriterConfig config;
-    private StandardAnalyzer analyzer;
+    private FrenchAnalyzer analyzer;
     private IndexWriter indexWriter;
 
 
@@ -103,7 +105,7 @@ public class ArticleIndex{
     public ArticleIndex() {
 
         // 1. On spécifie un analyzer
-        analyzer = new StandardAnalyzer();
+        analyzer = new FrenchAnalyzer();
 
         // 2. On crée l'index (Directory)
         index = new RAMDirectory();
@@ -303,7 +305,13 @@ public class ArticleIndex{
     public void addArticles(Collection<Article> c) {
         c.forEach(this::addArticle);
     }
-
+/* version franck
+    public void addArticles(Collection<Article> c) {
+        for (Article a : c) {
+            this.addArticle(a);
+        }
+    }
+*/
     /**
      * Remplace l'article correpondant à l'ID fourni en paramètre par un autre.
      * @param ID L'ID de l'article à remplacer
