@@ -10,7 +10,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * Controleur permettant l'import et l'export d'un ensemble d'articles
@@ -21,7 +20,7 @@ public class IOController {
     //*********PARTIE IMPORT*********//
 
     //format de la date, exemple : "Mon, 20 Jun 2016 01:32:03 -0400"
-    static SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
+    static SimpleDateFormat sdf = Article.dateFormat;
     static Article art;
     static ArrayList<Article> artList = new ArrayList<>();
     static CSVReader reader = null;
@@ -47,8 +46,14 @@ public class IOController {
      * @param line un tableau de String où chaque case = un champ d'un fichier
      * @return art un objet Article
      */
-    public static Article readLine(String[] line) throws MalformedURLException, ParseException {
-        art = new Article(line[0], line[1], convertDate(line[2]), line[3], line[4], new URL(line[5]));
+    public static Article readLine(String[] line) throws ParseException {
+        URL url;
+        try {
+            url = new URL(line[5]);
+        } catch (MalformedURLException e) {
+            url = null;
+        }
+        art = new Article(line[0], line[1], convertDate(line[2]), line[3], line[4], url );
 
         return art;
     }

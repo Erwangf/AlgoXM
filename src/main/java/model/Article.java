@@ -1,18 +1,24 @@
 package model;
 
+import javafx.beans.property.SimpleStringProperty;
 import org.apache.lucene.document.*;
 import org.apache.lucene.util.BytesRef;
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 public class Article {
 
 
-
-
+    private final PropertyChangeSupport propertySupport;
+    public final static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
     private String title;
     private String description;
     private Date date;
@@ -21,16 +27,21 @@ public class Article {
     private URL link;
     private final String ID; // l'identifiant d'un article ne peut pas être modifié
 
+
+    //Properties
+    private SimpleStringProperty titleProperty;
+
     /**
      * Construit un Article à partir de champs
-     * @param title Le Titre de l'article
+     *
+     * @param title       Le Titre de l'article
      * @param description La description ( contenu ) de l'article
-     * @param date La date de l'article
-     * @param rss Le flux RSS de l'article
-     * @param author L'auteur de l'article
-     * @param link L'URL vers l'article
+     * @param date        La date de l'article
+     * @param rss         Le flux RSS de l'article
+     * @param author      L'auteur de l'article
+     * @param link        L'URL vers l'article
      */
-    public Article(String title, String description, Date date, String rss, String author, URL link){
+    public Article(String title, String description, Date date, String rss, String author, URL link) {
         ID = UUID.randomUUID().toString(); //création d'un identifiant unique et aléatoire pour l'objet créé.
         this.title = title;
         this.description = description;
@@ -38,10 +49,14 @@ public class Article {
         this.rss = rss;
         this.author = author;
         this.link = link;
+
+        this.titleProperty = new SimpleStringProperty(this.title);
+        this.propertySupport = new PropertyChangeSupport(this);
     }
 
     /**
      * Construit un Article à partir d'un Document Lucene
+     *
      * @param d Un document Lucene
      */
     public Article(Document d) {
@@ -57,10 +72,16 @@ public class Article {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+
+        this.titleProperty = new SimpleStringProperty(this.title);
+        this.propertySupport = new PropertyChangeSupport(this);
+
+
     }
 
     /**
      * Fourni une liste d'articles par défaut
+     *
      * @return Une liste d'articles par défaut
      */
     public static ArrayList<Article> getDefaultArticles() {
@@ -137,24 +158,25 @@ public class Article {
 
     @Override
     public String toString() {
-        return "Title = "+title+"\n"+
-                "ID = "+ID+"\n"+
-                "Author = "+author+"\n"+
-                "Date = "+date+"\n"+
-                "RSS = "+rss+"\n"+
-                "link = "+link.toString()+"\n"+
-                "Description = "+(description.length()>128?description.substring(0,128)+"...":description)+"\n";
+        return "Title = " + title + "\n" +
+                "ID = " + ID + "\n" +
+                "Author = " + author + "\n" +
+                "Date = " + date + "\n" +
+                "RSS = " + rss + "\n" +
+                "link = " + link.toString() + "\n" +
+                "Description = " + (description.length() > 128 ? description.substring(0, 128) + "..." : description) + "\n";
     }
 
 
     /**
      * Construit un document à partir de l'article actuel
+     *
      * @return Le document correspondant à l'Article
      */
     public Document toDocument() {
         Document doc = new Document();
         // 1 : Champs indexables (TextField, LongPoint, StringField)
-        doc.add(new TextField(ArticleAttributes.TITLE,title, Field.Store.YES));
+        doc.add(new TextField(ArticleAttributes.TITLE, title, Field.Store.YES));
         doc.add(new TextField(ArticleAttributes.DESCRIPTION, description, Field.Store.YES));
         doc.add(new TextField(ArticleAttributes.RSS, rss, Field.Store.YES));
         doc.add(new TextField(ArticleAttributes.AUTHOR, author, Field.Store.YES));
@@ -163,8 +185,10 @@ public class Article {
         doc.add(new StoredField(ArticleAttributes.DATE, date.getTime()));
 
         //link stocké sous forme de texte
-        doc.add(new TextField(ArticleAttributes.LINK, link.toString(), Field.Store.YES));
-        doc.add(new StringField(ArticleAttributes.ID,ID,Field.Store.YES));
+        if (link != null) {
+            doc.add(new TextField(ArticleAttributes.LINK, link.toString(), Field.Store.YES));
+            doc.add(new StringField(ArticleAttributes.ID, ID, Field.Store.YES));
+        }
 
 
         // 2 : champs triables (Sorted[Fields...])
@@ -177,11 +201,13 @@ public class Article {
 
     // =============== GETTERS & SETTERS =================
     public String getTitle() {
-        return title;
+        return titleProperty.get();
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        propertySupport.firePropertyChange("set", this.title, title);
+        this.titleProperty.set(title);
+
     }
 
     public String getDescription() {
@@ -194,6 +220,10 @@ public class Article {
 
     public Date getDate() {
         return date;
+    }
+
+    public String getStrDate() {
+        return dateFormat.format(this.date);
     }
 
     public void setDate(Date date) {
@@ -228,4 +258,11 @@ public class Article {
         return ID;
     }
 
+    public SimpleStringProperty titleProperty() {
+        return this.titleProperty;
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertySupport.addPropertyChangeListener(listener);
+    }
 }

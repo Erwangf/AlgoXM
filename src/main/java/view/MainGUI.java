@@ -1,14 +1,14 @@
 package view;
 
 import com.sun.javafx.geom.Dimension2D;
+import controller.ArticleIndex;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
@@ -18,7 +18,7 @@ import view.component.*;
 import java.util.ArrayList;
 
 
-public class MainGUI extends Application implements Runnable {
+public class MainGUI extends Application {
     private final Dimension2D defaultSize = new Dimension2D(1200, 800);
     private final GridPane root;
     private final MenuBar menuBar;
@@ -35,14 +35,12 @@ public class MainGUI extends Application implements Runnable {
     private final MenuItem menuFreq;
     private final Menu menuAbout;
     private final MenuItem menuItemAbout;
+    public final ArticleIndex index;
 
+    private Scene scene;
+    public Stage stage;
 
-    private Button btnscene1, btnscene2;
-    private Label lblscene1, lblscene2;
-    private FlowPane pane1, pane2;
-    private Scene scene1, scene2;
-    private Stage stage;
-
+    private GridPane grid = new GridPane();
     private SortArticlePane sortArticlePane;
     private FilterArticlePane filterArticlePane;
     private ImportPane importPane;
@@ -53,15 +51,15 @@ public class MainGUI extends Application implements Runnable {
     private ArticleListPane articleListPane;
     private ExportPane exportPane;
 
+    public ArrayList<Article> currentArticles = new ArrayList<>();
 
-    private ObservableList<Article> articleList = FXCollections.observableArrayList();
-
-    GridPane grid = new GridPane();
 
     public MainGUI() {
-        new JFXPanel(); // Fix de l'erreur "Toolkit not initialized", quand utilisé sans le launch.
+        new JFXPanel(); // Fix de l'erreur "Toolkit not initialized", quand utilisé sans Application.launch ( statique )
         root = new GridPane();
 
+        // MENU
+        menuBar = new MenuBar();
         menuExpImp = new Menu("Import/Export");
         menuImp = new MenuItem("Importer les articles");
         menuExp = new MenuItem("Exporter les articles");
@@ -76,57 +74,60 @@ public class MainGUI extends Application implements Runnable {
         menuAbout = new Menu("à Propos");
         menuItemAbout = new MenuItem("A propos");
 
-        sortArticlePane = new SortArticlePane();
+        //INDEX
+        index = new ArticleIndex();
 
+        //PAGES
+        sortArticlePane = new SortArticlePane();
         filterArticlePane = new FilterArticlePane();
-        importPane = new ImportPane();
+        importPane = new ImportPane(this);
         advancedFilterPane = new AdvancedFilterPane();
         aboutPane = new AboutPane();
         cloudWordPane = new CloudWordPane();
         frequencyPane = new FrequencyPane();
         articleListPane = new ArticleListPane();
-        exportPane = new ExportPane();
-
-
-        menuBar = new MenuBar();
+        exportPane = new ExportPane(this);
 
     }
 
 
+
+
+    public void switchPane(GridPane pane){
+        scene.setRoot(new GridPane());
+        root.getChildren().clear();
+        GridPane.setConstraints(menuBar, 0, 0);
+        GridPane.setConstraints(pane, 0, 1);
+
+        GridPane.setHgrow(pane, Priority.ALWAYS);
+        GridPane.setVgrow(pane, Priority.ALWAYS);
+        root.getChildren().addAll(pane, menuBar);
+        root.setPrefSize(defaultSize.width, defaultSize.height);
+
+        scene.setRoot(root);
+        stage.setScene(scene);
+    }
+
     private void ButtonClicked(ActionEvent e) {
+        GridPane pane = new GridPane();
+        if (e.getSource() == menuTrisArt) pane = sortArticlePane;
+        else if (e.getSource() == menuFiltArt) pane = filterArticlePane;
+        else if (e.getSource() == menuImp) pane = importPane;
+        else if (e.getSource() == menuFiltAv) pane = advancedFilterPane;
+        else if (e.getSource() == menuItemAbout) pane = aboutPane;
+        else if (e.getSource() == menuMots) pane = cloudWordPane;
+        else if (e.getSource() == menuFreq) pane = frequencyPane;
+        else if (e.getSource() == menuItemArt) pane = articleListPane;
+        else if (e.getSource() == menuExp) pane = exportPane;
 
-
-        GridPane newRoot = new GridPane();
-
-        if (e.getSource() == menuTrisArt) grid = sortArticlePane;
-        else if (e.getSource() == menuFiltArt) grid = filterArticlePane;
-        else if (e.getSource() == menuImp) grid = importPane;
-        else if (e.getSource() == menuFiltAv) grid = advancedFilterPane;
-        else if (e.getSource() == menuItemAbout) grid = aboutPane;
-        else if (e.getSource() == menuMots) grid = cloudWordPane;
-        else if (e.getSource() == menuFreq) grid = frequencyPane;
-        else if (e.getSource() == menuItemArt) grid = articleListPane;
-        else if (e.getSource() == menuExp) grid = exportPane;
-
-
-        GridPane.setConstraints(menuBar,0,0);
-        GridPane.setConstraints(grid,0,1);
-
-        GridPane.setHgrow(grid, Priority.ALWAYS);
-        GridPane.setVgrow(grid, Priority.ALWAYS);
-        newRoot.getChildren().addAll(grid,menuBar);
-        newRoot.setPrefSize(defaultSize.width, defaultSize.height);
-
-        stage.setScene(new Scene(newRoot, defaultSize.width, defaultSize.height));
-
-
+        switchPane(pane);
     }
 
 
     @Override
     public void start(Stage primaryStage) {
 
-        stage = primaryStage;
+        this.stage = primaryStage;
         //can now use the stage in other methods
 
         menuBar.getMenus().addAll(menuExpImp, menuTris, menuStat, menuAbout);
@@ -150,55 +151,29 @@ public class MainGUI extends Application implements Runnable {
         menuFreq.setOnAction(this::ButtonClicked);
         //Menu A propos
         menuItemAbout.setOnAction(this::ButtonClicked);
-        //make 2 Panes
-
-
-        //make 2 scenes from 2 panes
 
 
         primaryStage.setTitle("Application Java");
-        grid = new ExportPane();
+        scene = new Scene(root, defaultSize.width, defaultSize.height);
+        switchPane(exportPane);
 
-        GridPane.setConstraints(menuBar, 0, 0);
-        GridPane.setConstraints(grid, 0, 1);
-        GridPane.setHgrow(grid, Priority.ALWAYS);
-        GridPane.setVgrow(grid, Priority.ALWAYS);
-
-
-        root.getChildren().addAll(grid,menuBar);
-
-        stage.setScene(new Scene(root, defaultSize.width, defaultSize.height));
+        stage.setScene(scene);
         primaryStage.show();
 
 
     }
 
-    @Override
-    public void run() {
-        launch();
-    }
 
     public static void main(String[] args) throws Exception {
 
-        MainGUI m = new MainGUI();
-        new Thread(m).start();
-
-//        launch(args);
+        launch(args);
 
     }
 
 
-    public ObservableList<Article> getArticleList() {
-        return articleList;
+    public void refreshData() {
+        System.out.println("Refreshing Data !");
+        currentArticles = index.getDefaultResult();
+        articleListPane.setArticles(currentArticles);
     }
-
-    public void setArticleList(ArrayList<Article> al) {
-        // Ici on ne redéfinie pas une nouvelle liste d'article à partir du paramètre, pour conserver le pointeur
-        al.forEach(this.articleList::add);
-        this.articleListPane.setArticles(this.articleList);
-
-    }
-
-
-
-}  
+}

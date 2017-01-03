@@ -11,7 +11,6 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
-import org.apache.lucene.util.BytesRef;
 
 import java.io.IOException;
 import java.util.*;
@@ -370,6 +369,17 @@ public class ArticleIndex{
         IndexReader reader = DirectoryReader.open(index);
         return  reader.getSumTotalTermFreq("description") / new Long (reader.getDocCount("description"));
         
+    }
+
+    public ArrayList<Article> getDefaultResult() {
+        try {
+            return this.search("*:*",100);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     
     /* renvoie toujours 0 ?_?
