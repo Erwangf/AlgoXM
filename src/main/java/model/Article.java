@@ -176,8 +176,14 @@ public class Article {
     public Document toDocument() {
         Document doc = new Document();
         // 1 : Champs indexables (TextField, LongPoint, StringField)
-        doc.add(new TextField(ArticleAttributes.TITLE, title, Field.Store.YES));
-        doc.add(new TextField(ArticleAttributes.DESCRIPTION, description, Field.Store.YES));
+        doc.add(new TextField(ArticleAttributes.TITLE,title, Field.Store.YES));
+
+        //nécessaire pour créer un TermVector sur description
+        FieldType myFieldType = new FieldType(TextField.TYPE_STORED);
+        myFieldType.setStoreTermVectors(true);
+        doc.add(new Field(ArticleAttributes.DESCRIPTION, description, myFieldType));
+
+       // doc.add(new TextField(ArticleAttributes.DESCRIPTION, description, Field.Store.YES));
         doc.add(new TextField(ArticleAttributes.RSS, rss, Field.Store.YES));
         doc.add(new TextField(ArticleAttributes.AUTHOR, author, Field.Store.YES));
 

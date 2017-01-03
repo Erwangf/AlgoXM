@@ -12,8 +12,11 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
 
 public class ArticleIndex{
     private Directory index;
@@ -347,6 +350,8 @@ public class ArticleIndex{
     }
 
     
+    /******************* PARTIE STATISTIQUES *******************/
+    
     /**
      * renvoie le nombre de document indexés
      * @return un entier
@@ -355,7 +360,7 @@ public class ArticleIndex{
     public int getNbDoc() throws IOException {
 
         IndexReader reader = DirectoryReader.open(index);
-        return  reader.getDocCount("title");
+        return  reader.getDocCount(ArticleAttributes.TITLE);
         
     }
     
@@ -367,7 +372,7 @@ public class ArticleIndex{
     public long getAvgNbWords() throws IOException {
 
         IndexReader reader = DirectoryReader.open(index);
-        return  reader.getSumTotalTermFreq("description") / new Long (reader.getDocCount("description"));
+        return  reader.getSumTotalTermFreq(ArticleAttributes.DESCRIPTION) / new Long (reader.getDocCount(ArticleAttributes.DESCRIPTION));
         
     }
 
@@ -382,34 +387,103 @@ public class ArticleIndex{
         return null;
     }
     
-    /* renvoie toujours 0 ?_?
+    /**
+     * renvoie le nombre d'articles dans lequel un terme en particulier est présent
+     * @return un int, nombre de documents
+     * @throws IOException  En cas d'erreur avec l'Index
+     */
     public int getNbDocTerm(Term term) throws IOException {
 
         IndexReader reader = DirectoryReader.open(index);
         return  reader.docFreq(term);
         
     }
-    */
     
-    /* idem
-    public void readingIndex() throws IOException {
-    	IndexReader reader = DirectoryReader.open(index);
-    	
-        String term = "a";
+    /**
+     * renvoie la fréquence d'un mot dans l'index, donc parmi tous les articles
+     * @return un int, fréquence d'un mot
+     * @throws IOException  En cas d'erreur avec l'Index
+     */
+    public long getFreqTerm(Term term) throws IOException {
 
-        	Term termInstance = new Term("description", term);                              
-        	long termFreq = reader.totalTermFreq(termInstance);
-        	long docCount = reader.docFreq(termInstance);
-
-        	System.out.println("term: "+term+", termFreq = "+termFreq+", docCount = "+docCount);  
-                   
-        reader.close();     
+        IndexReader reader = DirectoryReader.open(index);
+        return  reader.totalTermFreq(term);
+        
     }
-    */
+    
+    
+    /**
+     * renvoie la liste des XX mots les plus fréquents avec leur fréquence d'apparition
+     * @param int top Le nombre de mots à récupérer
+     * @return une liste Mot/fréquence 
+     * @throws IOException  En cas d'erreur avec l'Index
+     */
+    public List<Entry<String, Integer>> getTopFreq(int top) throws IOException {
+       
+    	// Ajout des entrées de la map à une liste
+    	final List<Entry<String, Integer>> entries = new ArrayList<Entry<String, Integer>>(getAllFreq().entrySet());
+      
+    	// Tri de la liste sur la valeur 
+    	Collections.sort(entries, new Comparator<Entry<String, Integer>>() {
+         public int compare(final Entry<String, Integer> e1, final Entry<String, Integer> e2) {
+           return e2.getValue().compareTo(e1.getValue());
+         }
+    	});
+       
+       //on garde seulement les XX premiers
+       return doTop(entries, top);
+       
+   }
+    
+    
+    /**
+     * renvoie tous les mots utilisés avec leur fréquence d'apparition
+     * @return une Hasmap String/int - Mot/fréquence 
+     * @throws IOException  En cas d'erreur avec l'Index
+     */
+    public Map<String, Integer> getAllFreq() throws IOException {
+    IndexReader reader = DirectoryReader.open(index);
+    int num_doc = reader.numDocs();
+    Map<String, Integer> tfm = new HashMap<String, Integer>();
+    
+    for(int docNum=0; docNum<num_doc; docNum++){
+  
+        Terms termVector = reader.getTermVector(docNum, ArticleAttributes.DESCRIPTION);
+        TermsEnum itr = termVector.iterator();
+        BytesRef term = null;
 
+  
+        while((term = itr.next()) != null){
+            try{
+                String termText = term.utf8ToString();
+                Term termInstance = new Term(ArticleAttributes.DESCRIPTION, term);
+                long termFreq = reader.totalTermFreq(termInstance);
+
+                tfm.put(termText, (int)termFreq);
+                
+            }catch(Exception e){
+                System.out.println(e);
+            }
+        }        
+    }
+    return tfm;
+   }
     
     
     
     
+    /**
+     * transforme une liste triée en liste topée (les X premiers)
+     * @param une liste String,Integer et un int top le nombre d'entrées à garder
+     * @return une liste Mot/fréquence topée
+     */
+    public List<Entry<String, Integer>> doTop(List<Entry<String, Integer>> fullList, int top){
+    	
+    	List<Entry<String, Integer>> topX = new ArrayList<Entry<String, Integer>>(fullList.subList(0 , top));
+        
+        return  topX;
+    }
+    
+     
 
 }

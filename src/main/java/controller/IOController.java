@@ -2,6 +2,7 @@ package controller;
 
 import com.opencsv.CSVReader;
 import model.Article;
+import model.ArticleAttributes;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -26,7 +27,7 @@ public class IOController {
     static CSVReader reader = null;
 
     //test
-    static String pathTest = "E:/MASTER/JAVA/PROJET/data/10L_fr-blogs-1.csv"; // Attention, chemin absolu = pas bien ==> TODO : chemin relatif
+    //static String pathTest = "E:/MASTER/JAVA/PROJET/data/10L_fr-blogs-1.csv"; 
 
 
     /**
@@ -113,6 +114,11 @@ public class IOController {
     public static void writeToCSV(ArrayList<Article> listArt, String pathTgt) {
         try {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathTgt), "UTF-8"));
+            String entete = delimitor + ArticleAttributes.TITLE + delimitor + separator + delimitor + ArticleAttributes.DESCRIPTION + delimitor + separator
+                    + delimitor + ArticleAttributes.DATE + delimitor + separator + delimitor + ArticleAttributes.RSS + delimitor + separator
+                    + delimitor + ArticleAttributes.AUTHOR + delimitor + separator + delimitor + ArticleAttributes.LINK + delimitor;
+            bw.write(entete);
+            bw.newLine();
             for (Article a : listArt) {
                 bw.write(artToString(a));
                 bw.newLine();
