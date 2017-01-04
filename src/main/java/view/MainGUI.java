@@ -67,7 +67,7 @@ public class MainGUI extends Application {
         // MENU
         menuBar = new MenuBar();
         //> FILE
-        fileMenu = new Menu("Import/Export");
+        fileMenu = new Menu("Fichier");
         menuImp = new MenuItem("Ajouter un document");
         menuExp = new MenuItem("Exporter");
         menuClean = new MenuItem("Vider l'index");
@@ -168,7 +168,7 @@ public class MainGUI extends Application {
         primaryStage.setTitle("Application Java");
 
         scene = new Scene(root, defaultSize.width, defaultSize.height);
-        loadPane(aboutPane);
+        loadPane(articleListPane);
         stage.setScene(scene);
         primaryStage.show();
 
