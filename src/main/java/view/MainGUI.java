@@ -2,19 +2,26 @@ package view;
 
 import com.sun.javafx.geom.Dimension2D;
 import controller.ArticleIndex;
+import controller.IOController;
 import javafx.application.Application;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.Article;
 import view.component.*;
 
+import java.io.File;
 import java.util.ArrayList;
 
 
@@ -22,9 +29,8 @@ public class MainGUI extends Application {
     private final Dimension2D defaultSize = new Dimension2D(1200, 800);
     private final GridPane root;
     private final MenuBar menuBar;
-    private final Menu menuExpImp;
+    private final Menu fileMenu;
     private final MenuItem menuImp;
-    private final MenuItem menuExp;
     private final Menu menuTris;
     private final MenuItem menuItemArt;
     private final MenuItem menuTrisArt;
@@ -43,15 +49,15 @@ public class MainGUI extends Application {
     private GridPane grid = new GridPane();
     private SortArticlePane sortArticlePane;
     private FilterArticlePane filterArticlePane;
-    private ImportPane importPane;
     private AdvancedFilterPane advancedFilterPane;
     private AboutPane aboutPane;
     private CloudWordPane cloudWordPane;
     private FrequencyPane frequencyPane;
     private ArticleListPane articleListPane;
-    private ExportPane exportPane;
 
     public ArrayList<Article> currentArticles = new ArrayList<>();
+    private MenuItem menuExp;
+    private MenuItem menuClean;
 
 
     public MainGUI() {
@@ -60,9 +66,12 @@ public class MainGUI extends Application {
 
         // MENU
         menuBar = new MenuBar();
-        menuExpImp = new Menu("Import/Export");
-        menuImp = new MenuItem("Importer les articles");
-        menuExp = new MenuItem("Exporter les articles");
+        //> FILE
+        fileMenu = new Menu("Import/Export");
+        menuImp = new MenuItem("Ajouter un document");
+        menuExp = new MenuItem("Exporter");
+        menuClean = new MenuItem("Vider l'index");
+
         menuItemArt = new MenuItem("Articles");
         menuTris = new Menu("Tris et filtres");
         menuTrisArt = new MenuItem("Trier les articles");
@@ -74,26 +83,25 @@ public class MainGUI extends Application {
         menuAbout = new Menu("à Propos");
         menuItemAbout = new MenuItem("A propos");
 
+
+
         //INDEX
         index = new ArticleIndex();
 
         //PAGES
         sortArticlePane = new SortArticlePane();
         filterArticlePane = new FilterArticlePane();
-        importPane = new ImportPane(this);
         advancedFilterPane = new AdvancedFilterPane();
         aboutPane = new AboutPane();
         cloudWordPane = new CloudWordPane();
         frequencyPane = new FrequencyPane();
         articleListPane = new ArticleListPane();
-        exportPane = new ExportPane(this);
-
     }
 
 
 
 
-    public void switchPane(GridPane pane){
+    public void loadPane(GridPane pane){
         scene.setRoot(new GridPane());
         root.getChildren().clear();
         GridPane.setConstraints(menuBar, 0, 0);
@@ -108,19 +116,17 @@ public class MainGUI extends Application {
         stage.setScene(scene);
     }
 
-    private void ButtonClicked(ActionEvent e) {
+    public void switchPane(ActionEvent e) {
         GridPane pane = new GridPane();
         if (e.getSource() == menuTrisArt) pane = sortArticlePane;
         else if (e.getSource() == menuFiltArt) pane = filterArticlePane;
-        else if (e.getSource() == menuImp) pane = importPane;
         else if (e.getSource() == menuFiltAv) pane = advancedFilterPane;
         else if (e.getSource() == menuItemAbout) pane = aboutPane;
         else if (e.getSource() == menuMots) pane = cloudWordPane;
         else if (e.getSource() == menuFreq) pane = frequencyPane;
         else if (e.getSource() == menuItemArt) pane = articleListPane;
-        else if (e.getSource() == menuExp) pane = exportPane;
 
-        switchPane(pane);
+        loadPane(pane);
     }
 
 
@@ -130,38 +136,46 @@ public class MainGUI extends Application {
         this.stage = primaryStage;
         //can now use the stage in other methods
 
-        menuBar.getMenus().addAll(menuExpImp, menuTris, menuStat, menuAbout);
+        menuBar.getMenus().addAll(fileMenu, menuTris, menuStat, menuAbout);
 
-        menuExpImp.getItems().addAll(menuImp, menuExp);
+
+        fileMenu.getItems().addAll(menuImp,menuExp, menuClean);
         menuTris.getItems().addAll(menuItemArt, menuTrisArt, menuFiltArt, menuFiltAv);
         menuStat.getItems().addAll(menuMots, menuFreq);
         menuAbout.getItems().addAll(menuItemAbout);
 
-        //Menu Exporter Importer
-        menuImp.setOnAction(this::ButtonClicked);
-        menuExp.setOnAction(this::ButtonClicked);
+        //MenuItem : Import
+        menuImp.setOnAction((e)->showFileInputChooser());
+        //MenuItem : Export
+        menuExp.setOnAction((e)->showExportFileChooser());
+        //MenuItem : Export
+        menuClean.setOnAction((e)->showCleanWindow());
+
+
         //Menu Articles
-        menuItemArt.setOnAction(this::ButtonClicked);
+        menuItemArt.setOnAction(this::switchPane);
         //Menu Tris
-        menuTrisArt.setOnAction(this::ButtonClicked);
-        menuFiltArt.setOnAction(this::ButtonClicked);
-        menuFiltAv.setOnAction(this::ButtonClicked);
+        menuTrisArt.setOnAction(this::switchPane);
+        menuFiltArt.setOnAction(this::switchPane);
+        menuFiltAv.setOnAction(this::switchPane);
         //Menu Stat
-        menuMots.setOnAction(this::ButtonClicked);
-        menuFreq.setOnAction(this::ButtonClicked);
+        menuMots.setOnAction(this::switchPane);
+        menuFreq.setOnAction(this::switchPane);
         //Menu A propos
-        menuItemAbout.setOnAction(this::ButtonClicked);
+        menuItemAbout.setOnAction(this::switchPane);
 
 
         primaryStage.setTitle("Application Java");
-        scene = new Scene(root, defaultSize.width, defaultSize.height);
-        switchPane(exportPane);
 
+        scene = new Scene(root, defaultSize.width, defaultSize.height);
+        loadPane(aboutPane);
         stage.setScene(scene);
         primaryStage.show();
 
 
     }
+
+
 
 
     public static void main(String[] args) throws Exception {
@@ -171,9 +185,72 @@ public class MainGUI extends Application {
     }
 
 
-    public void refreshData() {
+    private void initData() {
         System.out.println("Refreshing Data !");
         currentArticles = index.getDefaultResult();
         articleListPane.setArticles(currentArticles);
+    }
+
+
+    private void loadArticleFromFile(String path){
+
+        if(path.length()!=0){
+            index.addArticles(IOController.readFile(path));
+            initData();
+        }
+
+    }
+
+    private void showFileInputChooser(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        File f = fileChooser.showOpenDialog(stage);
+        if(f!=null){
+            loadArticleFromFile(f.getPath());
+        }
+    }
+
+    private void showExportFileChooser() {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv");
+        fileChooser.getExtensionFilters().add(extFilter);
+        fileChooser.setTitle("Save...");
+        File f = fileChooser.showSaveDialog(stage);
+
+        if (f != null) {
+            writeToFile(f.getPath());
+        }
+    }
+
+    private void writeToFile(String path) {
+        if (path.length() != 0) {
+            IOController.writeToCSV(currentArticles, path);
+        }
+    }
+    private void showCleanWindow() {
+        final Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initOwner(stage);
+        VBox dialogVbox = new VBox(20);
+        dialogVbox.getChildren().add(new Text("Voulez-vous vraiment vider l'index de tous les documents enregistrés ?"));
+        Button btnYes = new Button("Oui");
+        Button btnNo = new Button("Non");
+        btnYes.setOnAction((e)->{this.clean();dialog.hide();});
+        btnNo.setOnAction((e)->dialog.hide());
+        GridPane pane = new GridPane();
+        GridPane.setConstraints(dialogVbox,0,0);
+        GridPane.setConstraints(btnYes,0,1);
+        GridPane.setConstraints(btnNo,0,2);
+
+        pane.getChildren().addAll(dialogVbox,btnNo,btnYes);
+
+        Scene dialogScene = new Scene(pane, 400, 300);
+        dialog.setScene(dialogScene);
+        dialog.show();
+
+    }
+    private void clean(){
+        index.dropAll();
+        initData();
     }
 }
