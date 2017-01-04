@@ -3,9 +3,7 @@ package controller;
 import model.Article;
 import model.ArticleAttributes;
 import model.SortableAttributes;
-
 import org.apache.lucene.analysis.fr.FrenchAnalyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.*;
 import org.apache.lucene.queryparser.classic.ParseException;
