@@ -1,12 +1,5 @@
 package controller;
 
-import model.Article;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.util.ArrayList;
-
-
 public class IOControllerTest {
 
 
@@ -15,6 +8,7 @@ public class IOControllerTest {
      * Cette fonction est sensée renvoyer un ArrayList d'Article
      *
      */
+    /*
     @Test
     public void testImportOneLineToString(){
 
@@ -34,5 +28,5 @@ public class IOControllerTest {
         Assert.assertEquals("Auteur incorrect","TestAuthor",a.getAuthor());
         Assert.assertEquals("URL incorrect","http://test.url.com/",a.getLink().toString());
 
-    }
+    }*/
 }

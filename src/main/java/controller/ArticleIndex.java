@@ -465,7 +465,7 @@ public class ArticleIndex {
     /**
      * renvoie tous les mots utilisés avec leur fréquence d'apparition
      *
-     * @return une Hasmap String/int - Mot/fréquence
+     * @return une Hashmap String/int - Mot/fréquence
      * @throws IOException En cas d'erreur avec l'Index
      */
     public Map<String, Integer> getAllFreq() throws IOException {
@@ -478,7 +478,6 @@ public class ArticleIndex {
             Terms termVector = reader.getTermVector(docNum, ArticleAttributes.DESCRIPTION);
             TermsEnum itr = termVector.iterator();
             BytesRef term;
-
 
             while ((term = itr.next()) != null) {
                 try {

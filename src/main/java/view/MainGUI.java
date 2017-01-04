@@ -51,7 +51,7 @@ public class MainGUI extends Application {
     private FilterArticlePane filterArticlePane;
     private AdvancedFilterPane advancedFilterPane;
     private AboutPane aboutPane;
-    private CloudWordPane cloudWordPane;
+    private WordCloudPane wordCloudPanePane;
     private FrequencyPane frequencyPane;
     private ArticleListPane articleListPane;
 
@@ -93,7 +93,7 @@ public class MainGUI extends Application {
         filterArticlePane = new FilterArticlePane();
         advancedFilterPane = new AdvancedFilterPane();
         aboutPane = new AboutPane();
-        cloudWordPane = new CloudWordPane();
+        wordCloudPanePane = new WordCloudPane(this);
         frequencyPane = new FrequencyPane();
         articleListPane = new ArticleListPane();
     }
@@ -122,7 +122,7 @@ public class MainGUI extends Application {
         else if (e.getSource() == menuFiltArt) pane = filterArticlePane;
         else if (e.getSource() == menuFiltAv) pane = advancedFilterPane;
         else if (e.getSource() == menuItemAbout) pane = aboutPane;
-        else if (e.getSource() == menuMots) pane = cloudWordPane;
+        else if (e.getSource() == menuMots) pane = wordCloudPanePane;
         else if (e.getSource() == menuFreq) pane = frequencyPane;
         else if (e.getSource() == menuItemArt) pane = articleListPane;
 
@@ -189,6 +189,7 @@ public class MainGUI extends Application {
         System.out.println("Refreshing Data !");
         currentArticles = index.getDefaultResult();
         articleListPane.setArticles(currentArticles);
+        wordCloudPanePane.showWordCloud();
     }
 
 
@@ -249,6 +250,7 @@ public class MainGUI extends Application {
         dialog.show();
 
     }
+
     private void clean(){
         index.dropAll();
         initData();
