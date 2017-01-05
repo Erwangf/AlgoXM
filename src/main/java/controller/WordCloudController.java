@@ -10,8 +10,8 @@ import com.kennycason.kumo.palette.ColorPalette;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -35,18 +35,18 @@ public class WordCloudController {
     }
 
     public ArrayList<String> getKeyWords(int nb) {
-
+/*
         //la fonction de franck bug.
         //donc voici un résulat par défault
         ArrayList<String> result = new ArrayList<>();
 
         Collections.addAll(result, "Morgane", "Princesse", "Fromage", "Emilien", "Dandinou", "Cheesecake", "Crepes", "Nutella", "Fluos", "Bachar", "Cacahuette", "Banane", "Pizza", "France", "Flamby");
-        return result;
-        /*try {
+        return result;*/
+        try {
             return getKeyWordsFromListEntry(index.getTopFreq(nb));
         } catch (IOException e) {
             return new ArrayList<>();
-        }*/
+        }
     }
 
     public BufferedImage getWordCloudImage(int nb){

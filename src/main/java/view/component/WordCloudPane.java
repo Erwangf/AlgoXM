@@ -27,7 +27,7 @@ public class WordCloudPane extends GridPane {
 
     public void showWordCloud() {
 
-        BufferedImage bufferedImage = controller.getWordCloudImage(10);
+        BufferedImage bufferedImage = controller.getWordCloudImage(100);
 
         WritableImage wr = null;
         if (bufferedImage != null) {

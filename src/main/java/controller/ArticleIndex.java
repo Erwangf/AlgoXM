@@ -3,7 +3,9 @@ package controller;
 import model.Article;
 import model.ArticleAttributes;
 import model.SortableAttributes;
-import org.apache.lucene.analysis.fr.FrenchAnalyzer;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.*;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -20,7 +22,7 @@ import java.util.Map.Entry;
 public class ArticleIndex {
     private Directory index;
     private IndexWriterConfig config;
-    private FrenchAnalyzer analyzer;
+    private Analyzer analyzer;
     private IndexWriter indexWriter;
 
 
@@ -101,9 +103,12 @@ public class ArticleIndex {
      */
     public ArticleIndex() {
 
-        // 1. On spécifie un analyzer
-        analyzer = new FrenchAnalyzer();
 
+        ArrayList<String> stopWordsList = new ArrayList<String>();
+        stopWordsList.add("le"); // exemple de stopword
+        // 1. On spécifie un analyzer
+        CharArraySet stopWordsSet = new CharArraySet(stopWordsList,true);
+        analyzer = new StandardAnalyzer(stopWordsSet);
         // 2. On crée l'index (Directory)
         index = new RAMDirectory();
 
@@ -476,6 +481,9 @@ public class ArticleIndex {
         for (int docNum = 0; docNum < num_doc; docNum++) {
 
             Terms termVector = reader.getTermVector(docNum, ArticleAttributes.DESCRIPTION);
+            if(termVector==null){
+                continue;
+            }
             TermsEnum itr = termVector.iterator();
             BytesRef term;
 
