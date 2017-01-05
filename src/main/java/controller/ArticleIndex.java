@@ -3,6 +3,7 @@ package controller;
 import model.Article;
 import model.ArticleAttributes;
 import model.SortableAttributes;
+import model.StopWordsManager;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -104,9 +105,7 @@ public class ArticleIndex {
     public ArticleIndex() {
 
 
-        ArrayList<String> stopWordsList = new ArrayList<String>();
-        stopWordsList.add("le"); // exemple de stopword
-        // TODO : Externaliser dans une autre classe la liste des stopwords, voir depuis un fichier
+        ArrayList<String> stopWordsList = StopWordsManager.getFrenchStopWords();
 
 
         // 1. On spécifie un analyzer
