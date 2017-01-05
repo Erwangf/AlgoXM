@@ -106,6 +106,9 @@ public class ArticleIndex {
 
         ArrayList<String> stopWordsList = new ArrayList<String>();
         stopWordsList.add("le"); // exemple de stopword
+        // TODO : Externaliser dans une autre classe la liste des stopwords, voir depuis un fichier
+
+
         // 1. On spécifie un analyzer
         CharArraySet stopWordsSet = new CharArraySet(stopWordsList,true);
         analyzer = new StandardAnalyzer(stopWordsSet);
@@ -512,8 +515,8 @@ public class ArticleIndex {
      * @return une liste Mot/fréquence topée
      */
     public List<Entry<String, Integer>> doTop(List<Entry<String, Integer>> fullList, int top) {
-
-        return new ArrayList<>(fullList.subList(0, top));
+        if(top>fullList.size()) return new ArrayList<>();
+        else return new ArrayList<>(fullList.subList(0, top));
     }
 
 

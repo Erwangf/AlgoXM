@@ -189,7 +189,7 @@ public class MainGUI extends Application {
         System.out.println("Refreshing Data !");
         currentArticles = index.getDefaultResult();
         articleListPane.setArticles(currentArticles);
-        wordCloudPanePane.showWordCloud();
+        wordCloudPanePane.refresh();
     }
 
 
