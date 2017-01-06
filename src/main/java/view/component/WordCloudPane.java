@@ -39,7 +39,7 @@ public class WordCloudPane extends GridPane {
         wordCol.setCellValueFactory(f->new SimpleStringProperty(f.getValue().getWord()));
         wordCol.setSortable(false);
 
-        TableColumn<Frequency,Integer> freqCol = new TableColumn<>("Nombre de récurence");
+        TableColumn<Frequency,Integer> freqCol = new TableColumn<>("Nombre d'occurences");
         freqCol.setCellValueFactory(f->new SimpleIntegerProperty(f.getValue().getFrequency()).asObject());
         freqCol.setSortable(false);
 
