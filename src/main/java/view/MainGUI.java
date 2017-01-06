@@ -5,8 +5,10 @@ import controller.ArticleIndex;
 import controller.CSVError;
 import controller.IOController;
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -17,6 +19,7 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import model.Article;
 import view.component.*;
 
@@ -56,6 +59,7 @@ public class MainGUI extends Application {
     public ArrayList<Article> currentArticles = new ArrayList<>();
     private MenuItem menuExp;
     private MenuItem menuClean;
+    private final Stage waitDialog = new Stage();
 
 
     public MainGUI() {
@@ -185,8 +189,18 @@ public class MainGUI extends Application {
 
     private void initData() {
         System.out.println("Refreshing Data !");
-        articleListPane.refresh();
-        wordCloudPanePane.refresh();
+        pleaseWait("Chargement des données en cours...");
+        Task<Void> task = new Task<Void>() {
+            @Override
+            public Void call() throws Exception {
+                articleListPane.refresh();
+                wordCloudPanePane.refresh();
+                return null ;
+            }
+        };
+        task.setOnSucceeded(e -> hideWaitDialog());
+        new Thread(task).start();
+
     }
 
 
@@ -232,6 +246,25 @@ public class MainGUI extends Application {
         dialog.showAndWait();
         return tf.getText().replace("\\t","\t");
     };
+
+
+    public void pleaseWait(String message){
+        waitDialog.initStyle(StageStyle.UNDECORATED);
+        waitDialog.initModality(Modality.APPLICATION_MODAL);
+        waitDialog.initOwner(stage);
+        VBox dialogVbox = new VBox(20);
+        dialogVbox.getChildren().add(new Text(message));
+        Scene dialogScene = new Scene(dialogVbox, 300, 200);
+        waitDialog.setScene(dialogScene);
+        waitDialog.setResizable(false);
+
+        // consume event
+        waitDialog.setOnCloseRequest(Event::consume);
+        waitDialog.show();
+    }
+    public void hideWaitDialog(){
+        waitDialog.hide();
+    }
 
     private void showExportFileChooser() {
         FileChooser fileChooser = new FileChooser();
