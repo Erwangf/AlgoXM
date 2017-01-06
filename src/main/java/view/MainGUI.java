@@ -2,15 +2,13 @@ package view;
 
 import com.sun.javafx.geom.Dimension2D;
 import controller.ArticleIndex;
+import controller.CSVError;
 import controller.IOController;
 import javafx.application.Application;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -24,6 +22,7 @@ import view.component.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.function.Function;
 
 
 public class MainGUI extends Application {
@@ -85,6 +84,7 @@ public class MainGUI extends Application {
 
         //INDEX
         index = new ArticleIndex();
+        IOController.setErrorHandler(this.handleError);
 
         //PAGES
         sortArticlePane = new SortArticlePane();
@@ -168,6 +168,9 @@ public class MainGUI extends Application {
         primaryStage.show();
 
 
+
+
+
     }
 
 
@@ -204,6 +207,31 @@ public class MainGUI extends Application {
             loadArticleFromFile(f.getPath());
         }
     }
+
+    private Function<CSVError,String> handleError = csvError -> {
+        System.out.println(csvError.getMessage());
+        String line = csvError.getLine();
+
+        final Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initOwner(stage);
+        VBox dialogVbox = new VBox(20);
+        dialogVbox.getChildren().add(new Text(csvError.getMessage()));
+        System.out.println(csvError.getLine());
+
+        TextField tf = new TextField();
+        tf.setText(csvError.getLine().replace("\t","\\t"));
+
+        Button btnSubmit = new Button("Valider");
+        btnSubmit.setOnAction(event -> dialog.hide());
+        dialogVbox.getChildren().add(btnSubmit);
+        dialogVbox.getChildren().add(tf);
+
+        Scene dialogScene = new Scene(dialogVbox, 300, 200);
+        dialog.setScene(dialogScene);
+        dialog.showAndWait();
+        return tf.getText().replace("\\t","\t");
+    };
 
     private void showExportFileChooser() {
         FileChooser fileChooser = new FileChooser();

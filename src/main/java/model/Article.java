@@ -70,7 +70,7 @@ public class Article {
         try {
             this.link = new URL(d.get(ArticleAttributes.LINK));
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            this.link = null;
         }
 
         this.titleProperty = new SimpleStringProperty(this.title);
@@ -186,9 +186,12 @@ public class Article {
        // doc.add(new TextField(ArticleAttributes.DESCRIPTION, description, Field.Store.YES));
         doc.add(new TextField(ArticleAttributes.RSS, rss, Field.Store.YES));
         doc.add(new TextField(ArticleAttributes.AUTHOR, author, Field.Store.YES));
+        if(date!=null){
+            //date stockée en millisecondes (getTime)
+            doc.add(new StoredField(ArticleAttributes.DATE, date.getTime()));
+            doc.add(new SortedNumericDocValuesField(SortableAttributes.DATE, date.getTime()));
+        }
 
-        //date stockée en millisecondes (getTime)
-        doc.add(new StoredField(ArticleAttributes.DATE, date.getTime()));
 
         //link stocké sous forme de texte
         if (link != null) {
@@ -200,7 +203,7 @@ public class Article {
         // 2 : champs triables (Sorted[Fields...])
         doc.add(new SortedDocValuesField(SortableAttributes.TITLE, new BytesRef(title)));
         doc.add(new SortedDocValuesField(SortableAttributes.AUTHOR, new BytesRef(author)));
-        doc.add(new SortedNumericDocValuesField(SortableAttributes.DATE, date.getTime()));
+
 
         return doc;
     }

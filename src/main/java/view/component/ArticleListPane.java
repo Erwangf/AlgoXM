@@ -52,7 +52,7 @@ public class ArticleListPane extends BorderPane {
 
 
         TableColumn<Article, String> linkColumn = new TableColumn<>("Lien");
-        linkColumn.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getLink().toString()));
+        linkColumn.setCellValueFactory(p -> new SimpleStringProperty((p.getValue().getLink()==null?"":p.getValue().getLink()).toString()));
         linkColumn.setSortable(false);
 
         tableView.getColumns().addAll(
@@ -159,7 +159,6 @@ public class ArticleListPane extends BorderPane {
 
         this.setCenter(tableView);
         this.setRight(filterPane);
-
     }
 
 

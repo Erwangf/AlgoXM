@@ -1,9 +1,10 @@
 package controller;
 
+import com.opencsv.CSVParser;
 import com.opencsv.CSVReader;
-import com.sun.xml.internal.bind.v2.model.core.ErrorHandler;
 import model.Article;
 import model.ArticleAttributes;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -12,7 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Controleur permettant l'import et l'export d'un ensemble d'articles
@@ -20,6 +21,12 @@ import java.util.function.Consumer;
 public class IOController {
 
 
+    private static Function<CSVError,String> errorHandler;
+    private static final CSVParser parser = new CSVParser('\t', '\"');
+
+    public static void setErrorHandler(Function<CSVError, String> errorHandler) {
+        IOController.errorHandler = errorHandler;
+    }
     //*********PARTIE IMPORT*********//
 
     //format de la date, exemple : "Mon, 20 Jun 2016 01:32:03 -0400"
@@ -46,22 +53,54 @@ public class IOController {
     /**
      * Transforme un tableau de String (une ligne) passé en paramètre en un Article.
      *
-     * @param line un tableau de String où chaque case = un champ d'un fichier
-     * @param handleLineError
+     * @param rawline un tableau de String où chaque case = un champ d'un fichier
      * @return art un objet Article
      */
-    public static Article readLine(String[] line, Consumer<String[]> handler) throws ParseException {
-        URL url;
-        try {
-            url = new URL(line[5]);
-        } catch (MalformedURLException e) {
-        	url = null;
-
+    public static Article readLine(String rawline) throws ParseException {
+        if(rawline.equals("\"title\"\t\"description\"\t\"date\"\t\"rss\"\t\"author\"\t\"link\"")){
+            return null; //Header
         }
-        art = new Article(line[0], line[1], convertDate(line[2]), line[3], line[4], url );
+        String[] line;
+        String title = null;
+        String description = null;
+        Date date = null;
+        String rss = null;
+        String author = null;
+        URL url = null;
+        boolean validated = false;
+        while(!validated) {
+            try {
+                line = parser.parseLine(rawline);
+                validated = true;
+                if (line.length != 6) throw new Exception("Erreur, nombre de champs incorrects");
+                title = line[0];
+                if(title.length()==0) throw new Exception("Erreur, pas de titre !");
+                description = StringEscapeUtils.unescapeHtml(line[1]);
+                date = (line[2].length()==0 ? null : convertDate(line[2]));
+                rss = line[3];
+                author = line[4];
+                if(line[5].length()==0) url = null;
+                else{
+                    url = new URL(line[5]);
+                }
+            } catch (MalformedURLException e){
+                validated = false;
+                rawline = errorHandler.apply(new CSVError("Erreur dans l'URL", rawline));
+            }
+
+            catch (Exception e) {
+                validated = false;
+                rawline = errorHandler.apply(new CSVError(e.getMessage(), rawline));
+            }
+        }
+
+        art = new Article(title,description, date, rss, author, url );
 
         return art;
     }
+
+
+
 
 
     /**
@@ -73,12 +112,16 @@ public class IOController {
     public static ArrayList<Article> readFile(String pathSrc) {
 
         try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(pathSrc), "UTF8"));
 
-            reader = new CSVReader(new InputStreamReader(new FileInputStream(pathSrc), "UTF-8"), '\t', '\"', 1);
-
-            String[] fileLine;
-            while ((fileLine = reader.readNext()) != null) {
-                artList.add(readLine(fileLine, null));
+            String line;
+            boolean isHeader = true;
+            while ((line = br.readLine()) != null) {
+                if(!isHeader){
+                    Article a = readLine(line);
+                    if(a!=null)artList.add(a);
+                }
+                isHeader = false;
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();
