@@ -460,102 +460,9 @@ public class ArticleIndex {
 
     }
 
-
     /**
-     * renvoie la liste des XX mots les plus fréquents avec leur fréquence d'apparition
+     * charge tous les mots utilisés avec leur fréquence d'apparition
      *
-     * @param top Le nombre de mots à récupérer
-     * @return une liste Mot/fréquence
-     * @throws IOException En cas d'erreur avec l'Index
-     */
-    public List<Frequency> getTopFreq(int top) throws IOException {
-
-    	
-        // Ajout des entrées de la map à une liste
-        final List<Frequency> entries = new ArrayList<>();
-        for (Entry<String, Integer> entry : getAllFreq().entrySet()) {
-            entries.add(new Frequency(entry.getKey(), entry.getValue()));
-        }
-        
-        // Tri de la liste sur la valeur
-        Collections.sort(entries, new Comparator<Frequency>() {
-            public int compare(final Frequency e1, final Frequency e2) {
-                return e2.getFrequency() - e1.getFrequency();
-            }
-        });
-        
-        
-
-        //on garde seulement les XX premiers
-        return doTop(entries, top);
-
-    }
-
-
-    /**
-     * renvoie tous les mots utilisés avec leur fréquence d'apparition
-     *
-     * @return une Hashmap String/int - Mot/fréquence
-     * @throws IOException En cas d'erreur avec l'Index
-     */
-    public Map<String, Integer> getAllFreq() throws IOException {
-        IndexReader reader = DirectoryReader.open(index);
-        int num_doc = reader.numDocs();
-        Map<String, Integer> tfm = new HashMap<>();
-
-        for (int docNum = 0; docNum < num_doc; docNum++) {
-
-            Terms termVector = reader.getTermVector(docNum, ArticleAttributes.DESCRIPTION);
-            if (termVector == null) {
-                continue;
-            }
-            TermsEnum itr = termVector.iterator();
-            BytesRef term;
-
-            while ((term = itr.next()) != null) {
-                try {
-                    String termText = term.utf8ToString();
-                    Term termInstance = new Term(ArticleAttributes.DESCRIPTION, term);
-                    long termFreq = reader.totalTermFreq(termInstance);
-
-                    tfm.put(termText, (int) termFreq);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return tfm;
-    }
-
-
-    /**
-     * transforme une liste triée en liste topée (les X premiers)
-     *
-     * @param fullList liste String,Integer
-     * @param top      le nombre d'entrées à garder
-     * @return une liste Mot/fréquence topée
-     */
-    private List<Frequency> doTop(List<Frequency> fullList, int top) {
-        if (top > fullList.size()) return fullList;
-        else return new ArrayList<>(fullList.subList(0, top));
-    }
-
-
-    public ArrayList<Article> getFirstArticles(int nb) {
-        try {
-            return search("*:*",nb);
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
-    
-    
-    /**
-     * renvoie tous les mots utilisés avec leur fréquence d'apparition
-     *
-     * @return une Hashmap String/int - Mot/fréquence
      * @throws IOException En cas d'erreur avec l'Index
      */
     public void runAnalysis() throws IOException {
@@ -598,7 +505,7 @@ public class ArticleIndex {
      * @return une liste Mot/fréquence
      * @throws IOException En cas d'erreur avec l'Index
      */
-    public List<Frequency> getTopFreq2(int top) throws IOException {
+    public List<Frequency> getTopFreq(int top) throws IOException {
     	
     	//on vérifie si la liste n'a pas déjà été chargée
     	if (frequence.size()==0){
@@ -618,6 +525,38 @@ public class ArticleIndex {
 
     }
     
+
+
+
+    /**
+     * transforme une liste triée en liste topée (les X premiers)
+     *
+     * @param fullList liste String,Integer
+     * @param top      le nombre d'entrées à garder
+     * @return une liste Mot/fréquence topée
+     */
+    private List<Frequency> doTop(List<Frequency> fullList, int top) {
+        if (top > fullList.size()) return fullList;
+        else return new ArrayList<>(fullList.subList(0, top));
+    }
+
+
+    
+    
+    public ArrayList<Article> getFirstArticles(int nb) {
+        try {
+            return search("*:*",nb);
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+    
+    
+   
+
+    
+
     
     
     
