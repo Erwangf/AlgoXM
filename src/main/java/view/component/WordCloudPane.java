@@ -46,7 +46,7 @@ public class WordCloudPane extends GridPane {
         tableView.getColumns().addAll(freqCol, wordCol);
         tableView.setItems(data);
 
-        GridPane.setConstraints(tableView, 1, 2);
+        GridPane.setConstraints(tableView, 0, 1);
         this.getChildren().add(tableView);
 
 
