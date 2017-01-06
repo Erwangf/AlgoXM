@@ -19,6 +19,7 @@ import org.apache.lucene.util.BytesRef;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
 
 import static org.apache.lucene.analysis.fr.FrenchAnalyzer.DEFAULT_ARTICLES;
 
@@ -470,7 +471,7 @@ public class ArticleIndex {
     public void runAnalysis() throws IOException {
         IndexReader reader = DirectoryReader.open(index);
         int num_doc = reader.numDocs();
-        Frequency oneFreq;
+        Map<String, Integer> tfm = new HashMap<>();
 
         for (int docNum = 0; docNum < num_doc; docNum++) {
 
@@ -487,14 +488,16 @@ public class ArticleIndex {
                     Term termInstance = new Term(ArticleAttributes.DESCRIPTION, term);
                     long termFreq = reader.totalTermFreq(termInstance);
 
-                    oneFreq = new Frequency(termText, (int) termFreq);
-                    
-                    frequence.add(oneFreq);
-                    
+                    tfm.put(termText, (int) termFreq);
+          
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+        }
+        
+        for (Entry<String, Integer> entry : tfm.entrySet()) {
+            frequence.add(new Frequency(entry.getKey(), entry.getValue()));
         }
 
     }
