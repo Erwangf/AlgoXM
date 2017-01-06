@@ -36,10 +36,10 @@ public class ArticleListPane extends BorderPane {
         tableView.setEditable(false);
 
         TableColumn<Article, String> titleColumn = new TableColumn<>("Titre");
-        titleColumn.setCellValueFactory(p->new SimpleStringProperty(p.getValue().getTitle()));
+        titleColumn.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getTitle()));
         titleColumn.setSortable(false);
         TableColumn<Article, String> descriptionColumn = new TableColumn<>("Description");
-        descriptionColumn.setCellValueFactory((p -> new SimpleStringProperty(p.getValue().getDescription().substring(0, 40))));
+        descriptionColumn.setCellValueFactory((p -> new SimpleStringProperty(p.getValue().getDescription().substring(0, Math.min(p.getValue().getDescription().length(), 40)))));
 
         descriptionColumn.setSortable(false);
         TableColumn<Article, String> authorColumn = new TableColumn<>("Auteur");
@@ -56,7 +56,7 @@ public class ArticleListPane extends BorderPane {
 
 
         TableColumn<Article, String> linkColumn = new TableColumn<>("Lien");
-        linkColumn.setCellValueFactory(p -> new SimpleStringProperty((p.getValue().getLink()==null?"":p.getValue().getLink()).toString()));
+        linkColumn.setCellValueFactory(p -> new SimpleStringProperty((p.getValue().getLink() == null ? "" : p.getValue().getLink()).toString()));
         linkColumn.setSortable(false);
 
         tableView.getColumns().addAll(
@@ -113,12 +113,11 @@ public class ArticleListPane extends BorderPane {
 
                 sortCriteria = (String) sortGroup.getSelectedToggle().getUserData();
 
-                if(!sortCriteria.equals(SortableAttributes.RELEVANCE)){
+                if (!sortCriteria.equals(SortableAttributes.RELEVANCE)) {
                     orderLabel.setVisible(true);
                     rbo1.setVisible(true);
                     rbo2.setVisible(true);
-                }
-                else{
+                } else {
                     orderLabel.setVisible(false);
                     rbo1.setVisible(false);
                     rbo2.setVisible(false);
@@ -128,7 +127,6 @@ public class ArticleListPane extends BorderPane {
         });
         Button buttonTrier = new Button("buttonTrier");
         buttonTrier.setText("Trier");
-
 
 
         //Positionnement au sein du filterPane
@@ -157,9 +155,7 @@ public class ArticleListPane extends BorderPane {
 
         GridPane.setConstraints(buttonTrier, 0, 7);
         filterPane.getChildren().add(buttonTrier);
-        buttonTrier.setOnAction((e)->switchtrie());
-
-
+        buttonTrier.setOnAction((e) -> switchtrie());
 
 
         this.setCenter(tableView);
