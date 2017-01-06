@@ -194,7 +194,7 @@ public class ArticleIndex {
                 sort = Sort.RELEVANCE;
                 break;
         }
-
+        if(getNbDoc()==0)return new ArrayList<>();
         IndexReader reader = DirectoryReader.open(index);
         IndexSearcher searcher = new IndexSearcher(reader);
         TopDocs docs = searcher.search(query, n, sort);
@@ -405,7 +405,7 @@ public class ArticleIndex {
      * @throws IOException En cas d'erreur avec l'Index
      */
     public int getNbDoc() throws IOException {
-
+        if(!DirectoryReader.indexExists(index))return 0;
         IndexReader reader = DirectoryReader.open(index);
         return reader.getDocCount(ArticleAttributes.TITLE);
 
