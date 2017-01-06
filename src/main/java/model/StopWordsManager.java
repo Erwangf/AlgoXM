@@ -23,7 +23,7 @@ public class StopWordsManager {
         ArrayList<String> sw = new ArrayList<>();
 	    ClassLoader classLoader = new Object() { }.getClass().getClassLoader();
               try {
-                reader = new CSVReader(new InputStreamReader(classLoader.getResourceAsStream(path)));
+                reader = new CSVReader(new InputStreamReader(classLoader.getResourceAsStream(path),"UTF-8"));
                 String[] fileLine;
                 while ((fileLine = reader.readNext()) != null) {
                     sw.add(fileLine[0]);
