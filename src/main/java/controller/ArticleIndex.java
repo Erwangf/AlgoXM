@@ -275,6 +275,7 @@ public class ArticleIndex {
             strQuery += term + ":" + value;
             first = false;
         }
+        System.out.println(strQuery);
         return strQuery;
     }
 

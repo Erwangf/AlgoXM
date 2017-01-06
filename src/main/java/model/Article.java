@@ -55,6 +55,7 @@ public class Article {
         this.title = d.get(ArticleAttributes.TITLE);
         this.description = d.get(ArticleAttributes.DESCRIPTION);
         if(d.get(ArticleAttributes.DATE)!=null){
+            System.out.println(d.get(ArticleAttributes.DATE));
             this.date = new Date(Long.parseLong(d.get(ArticleAttributes.DATE)));
         }
         else this.date = null;
@@ -179,7 +180,7 @@ public class Article {
         doc.add(new TextField(ArticleAttributes.AUTHOR, author, Field.Store.YES));
         if(date!=null){
             //date stockée en millisecondes (getTime)
-            doc.add(new StoredField(ArticleAttributes.DATE, date.getTime()));
+            doc.add(new NumericDocValuesField(ArticleAttributes.DATE, date.getTime()));
             doc.add(new SortedNumericDocValuesField(SortableAttributes.DATE, date.getTime()));
         }
 

@@ -36,24 +36,17 @@ public class MainGUI extends Application {
     private final MenuItem menuImp;
     private final Menu menuTris;
     private final MenuItem menuItemArt;
-    private final MenuItem menuTrisArt;
-    private final MenuItem menuFiltAv;
     private final Menu menuStat;
     private final MenuItem menuMots;
-    private final MenuItem menuFreq;
-    private final Menu menuAbout;
-    private final MenuItem menuItemAbout;
+
     public final ArticleIndex index;
 
     private Scene scene;
     public Stage stage;
 
     private GridPane grid = new GridPane();
-    private SortArticlePane sortArticlePane;
-    private AdvancedFilterPane advancedFilterPane;
-    private AboutPane aboutPane;
     private WordCloudPane wordCloudPanePane;
-    private FrequencyPane frequencyPane;
+
     private ArticleListPane articleListPane;
 
     public ArrayList<Article> currentArticles = new ArrayList<>();
@@ -76,13 +69,9 @@ public class MainGUI extends Application {
 
         menuItemArt = new MenuItem("Articles");
         menuTris = new Menu("Tris et filtres");
-        menuTrisArt = new MenuItem("Trier les articles");
-        menuFiltAv = new MenuItem("Filtre avancé");
+
         menuStat = new Menu("Statistiques");
-        menuMots = new MenuItem("Nuage de Mots");
-        menuFreq = new MenuItem("Fréquence");
-        menuAbout = new Menu("à Propos");
-        menuItemAbout = new MenuItem("A propos");
+        menuMots = new MenuItem("Fréquences des mots");
 
 
 
@@ -91,11 +80,8 @@ public class MainGUI extends Application {
         IOController.setErrorHandler(this.handleError);
 
         //PAGES
-        sortArticlePane = new SortArticlePane();
-        advancedFilterPane = new AdvancedFilterPane();
-        aboutPane = new AboutPane();
         wordCloudPanePane = new WordCloudPane(this);
-        frequencyPane = new FrequencyPane();
+
         articleListPane = new ArticleListPane(this);
     }
 
@@ -119,11 +105,9 @@ public class MainGUI extends Application {
 
     public void switchPane(ActionEvent e) {
         Pane pane = new GridPane();
-        if (e.getSource() == menuTrisArt) pane = sortArticlePane;
-        else if (e.getSource() == menuFiltAv) pane = advancedFilterPane;
-        else if (e.getSource() == menuItemAbout) pane = aboutPane;
-        else if (e.getSource() == menuMots) pane = wordCloudPanePane;
-        else if (e.getSource() == menuFreq) pane = frequencyPane;
+
+        if (e.getSource() == menuMots) pane = wordCloudPanePane;
+
         else if (e.getSource() == menuItemArt) pane = articleListPane;
 
         loadPane(pane);
@@ -136,13 +120,12 @@ public class MainGUI extends Application {
         this.stage = primaryStage;
         //can now use the stage in other methods
 
-        menuBar.getMenus().addAll(fileMenu, menuTris, menuStat, menuAbout);
+        menuBar.getMenus().addAll(fileMenu, menuTris, menuStat);
 
 
         fileMenu.getItems().addAll(menuImp,menuExp, menuClean);
-        menuTris.getItems().addAll(menuItemArt, menuTrisArt, menuFiltAv);
-        menuStat.getItems().addAll(menuMots, menuFreq);
-        menuAbout.getItems().addAll(menuItemAbout);
+        menuTris.getItems().addAll(menuItemArt);
+        menuStat.getItems().addAll(menuMots);
 
         //MenuItem : Import
         menuImp.setOnAction((e)->showFileInputChooser());
@@ -154,14 +137,9 @@ public class MainGUI extends Application {
 
         //Menu Articles
         menuItemArt.setOnAction(this::switchPane);
-        //Menu Tris
-        menuTrisArt.setOnAction(this::switchPane);
-        menuFiltAv.setOnAction(this::switchPane);
+
         //Menu Stat
         menuMots.setOnAction(this::switchPane);
-        menuFreq.setOnAction(this::switchPane);
-        //Menu A propos
-        menuItemAbout.setOnAction(this::switchPane);
 
 
         primaryStage.setTitle("Application Java");

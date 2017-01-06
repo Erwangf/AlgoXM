@@ -13,9 +13,8 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import view.MainGUI;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 public class ArticleListPane extends BorderPane {
@@ -37,6 +36,9 @@ public class ArticleListPane extends BorderPane {
     private final TextField sourceField = new TextField();
     private final TextField rssField = new TextField();
     private String searchMode = "criteria";
+    private final DatePicker datePickerDebut = new DatePicker();
+    private final DatePicker datePickerFin = new DatePicker();
+    private final CheckBox useDateCB = new CheckBox("Filtrer sur la période");
 
     public ArticleListPane(MainGUI mainGUI) {
         super();
@@ -148,10 +150,9 @@ public class ArticleListPane extends BorderPane {
 
         Label rssLabel = new Label("RSS : ");
 
-        //mod_date:[20020101 TO 20030101]
+        Label fromLabel = new Label("De :");
 
-        // TODO date
-
+        Label toLabel = new Label("A :");
 
 
 
@@ -212,7 +213,23 @@ public class ArticleListPane extends BorderPane {
         GridPane.setConstraints(rssField, 1, 12);
         filterPane.getChildren().add(rssField);
 
-        GridPane.setConstraints(buttonSearch, 0, 13);
+        GridPane.setConstraints(fromLabel, 0, 13);
+        filterPane.getChildren().add(fromLabel);
+
+        GridPane.setConstraints(toLabel, 1, 13);
+        filterPane.getChildren().add(toLabel);
+
+        GridPane.setConstraints(datePickerDebut, 0, 14);
+        filterPane.getChildren().add(datePickerDebut);
+
+        GridPane.setConstraints(datePickerFin, 1, 14);
+        filterPane.getChildren().add(datePickerFin);
+
+        GridPane.setConstraints(useDateCB, 0, 15);
+        filterPane.getChildren().add(useDateCB);
+
+
+        GridPane.setConstraints(buttonSearch, 0, 16);
         filterPane.getChildren().add(buttonSearch);
         buttonSearch.setOnAction((e) -> switchtrie());
 
@@ -235,14 +252,32 @@ public class ArticleListPane extends BorderPane {
                 if (authorField.getText().length() > 0) map.put(ArticleAttributes.AUTHOR, authorField.getText());
                 if (sourceField.getText().length() > 0) map.put(ArticleAttributes.LINK, sourceField.getText());
                 if (rssField.getText().length() > 0) map.put(ArticleAttributes.RSS, rssField.getText());
+                if (useDateCB.isSelected()) {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/M/yyyy", Locale.ENGLISH);
+//                    String query = "{"
+//                            + dateFormat.parse(datePickerDebut.getEditor().getText()).getTime()/100
+//                            + " TO "
+//                            + dateFormat.parse(datePickerFin.getEditor().getText()).getTime()/100
+//                            + "}";
+                    String query = "(>"
+                            + dateFormat.parse(datePickerDebut.getEditor().getText()).getTime()/100
+                            +")";
 
+                    map.put(ArticleAttributes.DATE,
+                            query);
+                    System.out.println(query);
+
+                }
+                //mod_date:[20020101 TO 20030101]
+
+                // TODO date
 
 
                 setArticles(mainGUI.index.searchByTerms(map, nbArticle, sortGroup.getSelectedToggle().getUserData().toString(), ascending));
             }
 
 
-        } catch (IOException | ParseException e) {
+        } catch (IOException | ParseException | java.text.ParseException e) {
             e.printStackTrace();
             setArticles(new ArrayList<>());
 
