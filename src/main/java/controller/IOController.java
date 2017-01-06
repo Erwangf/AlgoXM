@@ -1,6 +1,7 @@
 package controller;
 
 import com.opencsv.CSVReader;
+import com.sun.xml.internal.bind.v2.model.core.ErrorHandler;
 import model.Article;
 import model.ArticleAttributes;
 
@@ -11,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.function.Consumer;
 
 /**
  * Controleur permettant l'import et l'export d'un ensemble d'articles
@@ -45,14 +47,16 @@ public class IOController {
      * Transforme un tableau de String (une ligne) passé en paramètre en un Article.
      *
      * @param line un tableau de String où chaque case = un champ d'un fichier
+     * @param handleLineError
      * @return art un objet Article
      */
-    public static Article readLine(String[] line) throws ParseException {
+    public static Article readLine(String[] line, Consumer<String[]> handler) throws ParseException {
         URL url;
         try {
             url = new URL(line[5]);
         } catch (MalformedURLException e) {
-            url = null;
+        	url = null;
+
         }
         art = new Article(line[0], line[1], convertDate(line[2]), line[3], line[4], url );
 
@@ -74,7 +78,7 @@ public class IOController {
 
             String[] fileLine;
             while ((fileLine = reader.readNext()) != null) {
-                artList.add(readLine(fileLine));
+                artList.add(readLine(fileLine, null));
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();
