@@ -28,6 +28,7 @@ public class WordCloudPane extends GridPane {
     private int nbKeywordsFreq = 20;
     private final TableView<Frequency> tableView;
     private ObservableList<Frequency> data = FXCollections.observableList(new ArrayList<>());
+    private ImageView imView;
 
 
     public WordCloudPane(MainGUI mainGUI) {
@@ -45,8 +46,11 @@ public class WordCloudPane extends GridPane {
 
         tableView.getColumns().addAll(freqCol, wordCol);
         tableView.setItems(data);
+        imView = new ImageView();
+        GridPane.setConstraints(tableView, 1, 0);
+        this.getChildren().add(imView);
 
-        GridPane.setConstraints(tableView, 0, 1);
+        GridPane.setConstraints(tableView, 0, 0);
         this.getChildren().add(tableView);
 
 
@@ -73,9 +77,10 @@ public class WordCloudPane extends GridPane {
                 }
             }
         }
-
-        ImageView imView = new ImageView(wr);
+        imView = new ImageView(wr);
+        GridPane.setConstraints(tableView, 1, 0);
         this.getChildren().add(imView);
+
     }
 
     public void loadFreqs(){
