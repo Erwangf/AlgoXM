@@ -35,7 +35,6 @@ public class MainGUI extends Application {
     private final Menu menuTris;
     private final MenuItem menuItemArt;
     private final MenuItem menuTrisArt;
-    private final MenuItem menuFiltArt;
     private final MenuItem menuFiltAv;
     private final Menu menuStat;
     private final MenuItem menuMots;
@@ -49,7 +48,6 @@ public class MainGUI extends Application {
 
     private GridPane grid = new GridPane();
     private SortArticlePane sortArticlePane;
-    private FilterArticlePane filterArticlePane;
     private AdvancedFilterPane advancedFilterPane;
     private AboutPane aboutPane;
     private WordCloudPane wordCloudPanePane;
@@ -76,7 +74,6 @@ public class MainGUI extends Application {
         menuItemArt = new MenuItem("Articles");
         menuTris = new Menu("Tris et filtres");
         menuTrisArt = new MenuItem("Trier les articles");
-        menuFiltArt = new MenuItem("Filtrer les articles");
         menuFiltAv = new MenuItem("Filtre avancé");
         menuStat = new Menu("Statistiques");
         menuMots = new MenuItem("Nuage de Mots");
@@ -91,7 +88,6 @@ public class MainGUI extends Application {
 
         //PAGES
         sortArticlePane = new SortArticlePane();
-        filterArticlePane = new FilterArticlePane();
         advancedFilterPane = new AdvancedFilterPane();
         aboutPane = new AboutPane();
         wordCloudPanePane = new WordCloudPane(this);
@@ -120,7 +116,6 @@ public class MainGUI extends Application {
     public void switchPane(ActionEvent e) {
         Pane pane = new GridPane();
         if (e.getSource() == menuTrisArt) pane = sortArticlePane;
-        else if (e.getSource() == menuFiltArt) pane = filterArticlePane;
         else if (e.getSource() == menuFiltAv) pane = advancedFilterPane;
         else if (e.getSource() == menuItemAbout) pane = aboutPane;
         else if (e.getSource() == menuMots) pane = wordCloudPanePane;
@@ -141,7 +136,7 @@ public class MainGUI extends Application {
 
 
         fileMenu.getItems().addAll(menuImp,menuExp, menuClean);
-        menuTris.getItems().addAll(menuItemArt, menuTrisArt, menuFiltArt, menuFiltAv);
+        menuTris.getItems().addAll(menuItemArt, menuTrisArt, menuFiltAv);
         menuStat.getItems().addAll(menuMots, menuFreq);
         menuAbout.getItems().addAll(menuItemAbout);
 
@@ -157,7 +152,6 @@ public class MainGUI extends Application {
         menuItemArt.setOnAction(this::switchPane);
         //Menu Tris
         menuTrisArt.setOnAction(this::switchPane);
-        menuFiltArt.setOnAction(this::switchPane);
         menuFiltAv.setOnAction(this::switchPane);
         //Menu Stat
         menuMots.setOnAction(this::switchPane);

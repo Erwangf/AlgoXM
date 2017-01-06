@@ -128,8 +128,7 @@ public class ArticleListPane extends BorderPane {
         });
 
 
-        Button buttonTrier = new Button("buttonTrier");
-        buttonTrier.setText("Trier");
+
 
         //Positionnement au sein du filterPane
 
@@ -155,9 +154,6 @@ public class ArticleListPane extends BorderPane {
         GridPane.setConstraints(rbo2, 0, 6);
         filterPane.getChildren().add(rbo2);
 
-
-        GridPane.setConstraints(buttonTrier, 0, 7);
-        filterPane.getChildren().add(buttonTrier);
 
 
 
