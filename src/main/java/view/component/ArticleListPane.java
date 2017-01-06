@@ -8,8 +8,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import model.Article;
 import model.SortableAttributes;
+import org.apache.lucene.queryparser.classic.ParseException;
 import view.MainGUI;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -24,6 +26,8 @@ public class ArticleListPane extends BorderPane {
     private final Label orderLabel;
     private final RadioButton rbo1;
     private final RadioButton rbo2;
+    private final ToggleGroup sortGroup = new ToggleGroup();
+    private final ToggleGroup orderGroup = new ToggleGroup();
 
     public ArticleListPane(MainGUI mainGUI) {
         super();
@@ -73,9 +77,6 @@ public class ArticleListPane extends BorderPane {
         Label label = new Label("Tri des articles par :");
 
 
-
-        ToggleGroup sortGroup = new ToggleGroup();
-
         RadioButton rb1 = new RadioButton("Tri par pertinence");
         RadioButton rb2 = new RadioButton("Titre");
         RadioButton rb3 = new RadioButton("Auteur");
@@ -92,7 +93,6 @@ public class ArticleListPane extends BorderPane {
 
 
         orderLabel = new Label("Ordre:");
-        ToggleGroup orderGroup = new ToggleGroup();
         rbo1 = new RadioButton("Croissant");
         rbo2 = new RadioButton("Décroissant");
         rbo1.setUserData(true);
@@ -111,8 +111,8 @@ public class ArticleListPane extends BorderPane {
             if (sortGroup.getSelectedToggle() != null) {
 
 
-                sortCriteria = (String)sortGroup.getSelectedToggle().getUserData();
-                System.out.println(sortCriteria);
+                sortCriteria = (String) sortGroup.getSelectedToggle().getUserData();
+
                 if(!sortCriteria.equals(SortableAttributes.RELEVANCE)){
                     orderLabel.setVisible(true);
                     rbo1.setVisible(true);
@@ -126,7 +126,8 @@ public class ArticleListPane extends BorderPane {
             }
 
         });
-
+        Button buttonTrier = new Button("buttonTrier");
+        buttonTrier.setText("Trier");
 
 
 
@@ -154,11 +155,27 @@ public class ArticleListPane extends BorderPane {
         GridPane.setConstraints(rbo2, 0, 6);
         filterPane.getChildren().add(rbo2);
 
+        GridPane.setConstraints(buttonTrier, 0, 7);
+        filterPane.getChildren().add(buttonTrier);
+        buttonTrier.setOnAction((e)->switchtrie());
+
 
 
 
         this.setCenter(tableView);
         this.setRight(filterPane);
+    }
+
+
+    public void switchtrie() {
+
+        try {
+            boolean ascending = Boolean.parseBoolean(orderGroup.getSelectedToggle().getUserData().toString());
+            setArticles(mainGUI.index.search("*:*", nbArticle, sortGroup.getSelectedToggle().getUserData().toString(), ascending));
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

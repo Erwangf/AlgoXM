@@ -167,6 +167,7 @@ public class ArticleIndex {
      * @throws IOException    En cas d'erreur avec l'Index
      * @throws ParseException En cas de requête mal formée
      */
+
     public ArrayList<Article> search(String queryStr, int n, String sortTerm, boolean ascending) throws IOException, ParseException {
 
         // Par defaut, le champ description est utilisé si la requête n'en spécifie pas
@@ -180,12 +181,12 @@ public class ArticleIndex {
             case SortableAttributes.TITLE:
             case SortableAttributes.AUTHOR:
                 // Le tri porte sur une chaine de caractère
-                sort = new Sort(new SortField(sortTerm, SortField.Type.STRING, ascending));
+                sort = new Sort(new SortField(sortTerm, SortField.Type.STRING, !ascending));
                 break;
             case ArticleAttributes.DATE:
                 // La date est stockées sous forme de nombre de secondes
                 // Le tri porte donc sur un nombre
-                SortField sf = new SortedNumericSortField(sortTerm, SortField.Type.LONG, ascending);
+                SortField sf = new SortedNumericSortField(sortTerm, SortField.Type.LONG, !ascending);
                 sort = new Sort(sf);
 
                 break;
