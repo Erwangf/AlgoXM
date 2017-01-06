@@ -7,5 +7,4 @@ import java.util.Observable;
  */
 public class CSVErrorHandler {
 
-    Observable
 }
