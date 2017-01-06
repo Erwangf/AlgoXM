@@ -9,4 +9,5 @@ public class SortableAttributes {
     public static final String AUTHOR = ArticleAttributes.AUTHOR+suffix;
     public static final String DATE = ArticleAttributes.DATE+suffix;
     public static final String TITLE = ArticleAttributes.TITLE+suffix;
+    public static final String RELEVANCE = "RELEVANCE";
 }

@@ -145,7 +145,7 @@ public class ArticleIndex {
      */
     public ArrayList<Article> getAllArticles() {
         try {
-            return search("*:*", 1000000);
+            return search("*:*", getNbDoc());
         } catch (IOException | ParseException e) {
             e.printStackTrace();
             return null;
@@ -313,7 +313,6 @@ public class ArticleIndex {
      */
     public void addArticle(Article a) {
 
-        //hashMap.put(a.getID(), a);
         try {
             indexWriter.addDocument(a.toDocument());
             indexWriter.commit();
@@ -539,4 +538,12 @@ public class ArticleIndex {
     }
 
 
+    public ArrayList<Article> getFirstArticles(int nb) {
+        try {
+            return search("*:*",nb);
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
 }

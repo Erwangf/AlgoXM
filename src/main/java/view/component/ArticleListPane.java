@@ -3,27 +3,31 @@ package view.component;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
 import model.Article;
+import model.SortableAttributes;
+import view.MainGUI;
 
 import java.util.ArrayList;
 
 
-public class ArticleListPane extends GridPane {
+public class ArticleListPane extends BorderPane {
+
 
     private final ObservableList<Article> list;
     private final TableView<Article> tableView;
+    private final MainGUI mainGUI;
+    private int nbArticle = 100;
+    private String sortCriteria = SortableAttributes.RELEVANCE;
+    private final Label orderLabel;
+    private final RadioButton rbo1;
+    private final RadioButton rbo2;
 
-    public ArticleListPane() {
-
-
-
-
-
-
+    public ArticleListPane(MainGUI mainGUI) {
+        super();
+        this.mainGUI = mainGUI;
         tableView = new TableView<>();
         tableView.setEditable(false);
 
@@ -64,12 +68,102 @@ public class ArticleListPane extends GridPane {
 
 
         tableView.setItems(this.list);
+        GridPane filterPane = new GridPane();
+
+        Label label = new Label("Tri des articles par :");
 
 
-        GridPane.setConstraints(tableView, 0, 1);
-        GridPane.setHgrow(tableView, Priority.ALWAYS);
-        GridPane.setVgrow(tableView, Priority.ALWAYS);
-        this.getChildren().add(tableView);
+
+        ToggleGroup sortGroup = new ToggleGroup();
+
+        RadioButton rb1 = new RadioButton("Tri par pertinence");
+        RadioButton rb2 = new RadioButton("Titre");
+        RadioButton rb3 = new RadioButton("Auteur");
+
+        rb1.setUserData(SortableAttributes.RELEVANCE);
+        rb2.setUserData(SortableAttributes.TITLE);
+        rb3.setUserData(SortableAttributes.AUTHOR);
+
+        rb1.setToggleGroup(sortGroup);
+        rb2.setToggleGroup(sortGroup);
+        rb3.setToggleGroup(sortGroup);
+
+        sortGroup.selectToggle(rb1);
+
+
+        orderLabel = new Label("Ordre:");
+        ToggleGroup orderGroup = new ToggleGroup();
+        rbo1 = new RadioButton("Croissant");
+        rbo2 = new RadioButton("Décroissant");
+        rbo1.setUserData(true);
+        rbo2.setUserData(false);
+        rbo1.setToggleGroup(orderGroup);
+        rbo2.setToggleGroup(orderGroup);
+
+        orderLabel.setVisible(false);
+        rbo1.setVisible(false);
+        rbo2.setVisible(false);
+
+        orderGroup.selectToggle(rbo1);
+
+        sortGroup.selectedToggleProperty().addListener((ov, old_toggle, new_toggle) -> {
+
+            if (sortGroup.getSelectedToggle() != null) {
+
+
+                sortCriteria = (String)sortGroup.getSelectedToggle().getUserData();
+                System.out.println(sortCriteria);
+                if(!sortCriteria.equals(SortableAttributes.RELEVANCE)){
+                    orderLabel.setVisible(true);
+                    rbo1.setVisible(true);
+                    rbo2.setVisible(true);
+                }
+                else{
+                    orderLabel.setVisible(false);
+                    rbo1.setVisible(false);
+                    rbo2.setVisible(false);
+                }
+            }
+
+        });
+
+
+        Button buttonTrier = new Button("buttonTrier");
+        buttonTrier.setText("Trier");
+
+        //Positionnement au sein du filterPane
+
+        GridPane.setConstraints(label, 0, 0);
+        filterPane.getChildren().add(label);
+
+        GridPane.setConstraints(rb1, 0, 1);
+        filterPane.getChildren().add(rb1);
+
+        GridPane.setConstraints(rb2, 0, 2);
+        filterPane.getChildren().add(rb2);
+
+
+        GridPane.setConstraints(rb3, 0, 3);
+        filterPane.getChildren().add(rb3);
+
+        GridPane.setConstraints(orderLabel, 0, 4);
+        filterPane.getChildren().add(orderLabel);
+
+        GridPane.setConstraints(rbo1, 0, 5);
+        filterPane.getChildren().add(rbo1);
+
+        GridPane.setConstraints(rbo2, 0, 6);
+        filterPane.getChildren().add(rbo2);
+
+
+        GridPane.setConstraints(buttonTrier, 0, 7);
+        filterPane.getChildren().add(buttonTrier);
+
+
+
+        this.setCenter(tableView);
+        this.setRight(filterPane);
+
     }
 
 
@@ -82,7 +176,7 @@ public class ArticleListPane extends GridPane {
     }
 
 
-
-
-
+    public void refresh() {
+        setArticles(mainGUI.index.getFirstArticles(nbArticle));
+    }
 }

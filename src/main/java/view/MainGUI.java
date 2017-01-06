@@ -12,6 +12,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -95,13 +96,13 @@ public class MainGUI extends Application {
         aboutPane = new AboutPane();
         wordCloudPanePane = new WordCloudPane(this);
         frequencyPane = new FrequencyPane();
-        articleListPane = new ArticleListPane();
+        articleListPane = new ArticleListPane(this);
     }
 
 
 
 
-    public void loadPane(GridPane pane){
+    public void loadPane(Pane pane){
         scene.setRoot(new GridPane());
         root.getChildren().clear();
         GridPane.setConstraints(menuBar, 0, 0);
@@ -117,7 +118,7 @@ public class MainGUI extends Application {
     }
 
     public void switchPane(ActionEvent e) {
-        GridPane pane = new GridPane();
+        Pane pane = new GridPane();
         if (e.getSource() == menuTrisArt) pane = sortArticlePane;
         else if (e.getSource() == menuFiltArt) pane = filterArticlePane;
         else if (e.getSource() == menuFiltAv) pane = advancedFilterPane;
@@ -187,8 +188,7 @@ public class MainGUI extends Application {
 
     private void initData() {
         System.out.println("Refreshing Data !");
-        currentArticles = index.getDefaultResult();
-        articleListPane.setArticles(currentArticles);
+        articleListPane.refresh();
         wordCloudPanePane.refresh();
     }
 
