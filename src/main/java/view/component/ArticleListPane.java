@@ -7,12 +7,15 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import model.Article;
+import model.ArticleAttributes;
 import model.SortableAttributes;
 import org.apache.lucene.queryparser.classic.ParseException;
 import view.MainGUI;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 
 public class ArticleListPane extends BorderPane {
@@ -28,6 +31,12 @@ public class ArticleListPane extends BorderPane {
     private final RadioButton rbo2;
     private final ToggleGroup sortGroup = new ToggleGroup();
     private final ToggleGroup orderGroup = new ToggleGroup();
+    private final TextField titleField = new TextField();
+    private final TextField descriptionField = new TextField();
+    private final TextField authorField = new TextField();
+    private final TextField sourceField = new TextField();
+    private final TextField rssField = new TextField();
+    private String searchMode = "criteria";
 
     public ArticleListPane(MainGUI mainGUI) {
         super();
@@ -125,9 +134,28 @@ public class ArticleListPane extends BorderPane {
             }
 
         });
-        Button buttonTrier = new Button("buttonTrier");
-        buttonTrier.setText("Trier");
 
+        Label searchByCriteriaLabel = new Label("Recherche par critère");
+
+
+        Label titleLabel = new Label("Titre : ");
+
+        Label descriptionLabel = new Label("Description : ");
+
+        Label authorLabel = new Label("Auteur : ");
+
+        Label sourceLabel = new Label("Source : ");
+
+        Label rssLabel = new Label("RSS : ");
+
+        //mod_date:[20020101 TO 20030101]
+
+        // TODO date
+
+
+
+
+        Button buttonSearch = new Button("Rechercher");
 
         //Positionnement au sein du filterPane
 
@@ -153,9 +181,40 @@ public class ArticleListPane extends BorderPane {
         GridPane.setConstraints(rbo2, 0, 6);
         filterPane.getChildren().add(rbo2);
 
-        GridPane.setConstraints(buttonTrier, 0, 7);
-        filterPane.getChildren().add(buttonTrier);
-        buttonTrier.setOnAction((e) -> switchtrie());
+
+        GridPane.setConstraints(titleLabel, 0, 8);
+        filterPane.getChildren().add(titleLabel);
+
+        GridPane.setConstraints(titleField, 1, 8);
+        filterPane.getChildren().add(titleField);
+
+        GridPane.setConstraints(descriptionLabel, 0, 9);
+        filterPane.getChildren().add(descriptionLabel);
+
+        GridPane.setConstraints(descriptionField, 1, 9);
+        filterPane.getChildren().add(descriptionField);
+
+        GridPane.setConstraints(authorLabel, 0, 10);
+        filterPane.getChildren().add(authorLabel);
+
+        GridPane.setConstraints(authorField, 1, 10);
+        filterPane.getChildren().add(authorField);
+
+        GridPane.setConstraints(sourceLabel, 0, 11);
+        filterPane.getChildren().add(sourceLabel);
+
+        GridPane.setConstraints(sourceField, 1, 11);
+        filterPane.getChildren().add(sourceField);
+
+        GridPane.setConstraints(rssLabel, 0, 12);
+        filterPane.getChildren().add(rssLabel);
+
+        GridPane.setConstraints(rssField, 1, 12);
+        filterPane.getChildren().add(rssField);
+
+        GridPane.setConstraints(buttonSearch, 0, 13);
+        filterPane.getChildren().add(buttonSearch);
+        buttonSearch.setOnAction((e) -> switchtrie());
 
 
         this.setCenter(tableView);
@@ -166,10 +225,27 @@ public class ArticleListPane extends BorderPane {
     public void switchtrie() {
 
         try {
-            boolean ascending = Boolean.parseBoolean(orderGroup.getSelectedToggle().getUserData().toString());
-            setArticles(mainGUI.index.search("*:*", nbArticle, sortGroup.getSelectedToggle().getUserData().toString(), ascending));
+            if (searchMode.equals("criteria")) {
+                boolean ascending = Boolean.parseBoolean(orderGroup.getSelectedToggle().getUserData().toString());
+
+                HashMap<String, String> map = new LinkedHashMap<>();
+                if (titleField.getText().length() > 0) map.put(ArticleAttributes.TITLE, titleField.getText());
+                if (descriptionField.getText().length() > 0)
+                    map.put(ArticleAttributes.DESCRIPTION, descriptionField.getText());
+                if (authorField.getText().length() > 0) map.put(ArticleAttributes.AUTHOR, authorField.getText());
+                if (sourceField.getText().length() > 0) map.put(ArticleAttributes.LINK, sourceField.getText());
+                if (rssField.getText().length() > 0) map.put(ArticleAttributes.RSS, rssField.getText());
+
+
+
+                setArticles(mainGUI.index.searchByTerms(map, nbArticle, sortGroup.getSelectedToggle().getUserData().toString(), ascending));
+            }
+
+
         } catch (IOException | ParseException e) {
             e.printStackTrace();
+            setArticles(new ArrayList<>());
+
         }
 
     }

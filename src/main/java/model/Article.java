@@ -1,11 +1,8 @@
 package model;
 
-import javafx.beans.property.SimpleStringProperty;
 import org.apache.lucene.document.*;
 import org.apache.lucene.util.BytesRef;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -17,7 +14,6 @@ import java.util.UUID;
 public class Article {
 
 
-    private final PropertyChangeSupport propertySupport;
     public final static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
     private String title;
     private String description;
@@ -26,10 +22,6 @@ public class Article {
     private String author;
     private URL link;
     private final String ID; // l'identifiant d'un article ne peut pas être modifié
-
-
-    //Properties
-    private SimpleStringProperty titleProperty;
 
     /**
      * Construit un Article à partir de champs
@@ -50,8 +42,6 @@ public class Article {
         this.author = author;
         this.link = link;
 
-        this.titleProperty = new SimpleStringProperty(this.title);
-        this.propertySupport = new PropertyChangeSupport(this);
     }
 
     /**
@@ -64,7 +54,11 @@ public class Article {
         this.ID = d.get(ArticleAttributes.ID);
         this.title = d.get(ArticleAttributes.TITLE);
         this.description = d.get(ArticleAttributes.DESCRIPTION);
-        this.date = new Date(Long.parseLong(d.get(ArticleAttributes.DATE)));
+        if(d.get(ArticleAttributes.DATE)!=null){
+            this.date = new Date(Long.parseLong(d.get(ArticleAttributes.DATE)));
+        }
+        else this.date = null;
+
         this.rss = d.get(ArticleAttributes.RSS);
         this.author = d.get(ArticleAttributes.AUTHOR);
         try {
@@ -72,9 +66,6 @@ public class Article {
         } catch (MalformedURLException e) {
             this.link = null;
         }
-
-        this.titleProperty = new SimpleStringProperty(this.title);
-        this.propertySupport = new PropertyChangeSupport(this);
 
 
     }
@@ -210,12 +201,11 @@ public class Article {
 
     // =============== GETTERS & SETTERS =================
     public String getTitle() {
-        return titleProperty.get();
+        return title;
     }
 
     public void setTitle(String title) {
-        propertySupport.firePropertyChange("set", this.title, title);
-        this.titleProperty.set(title);
+        this.title = title;
 
     }
 
@@ -232,7 +222,8 @@ public class Article {
     }
 
     public String getStrDate() {
-        return dateFormat.format(this.date);
+        if(this.date!=null)return dateFormat.format(this.date);
+        else return "";
     }
 
     public void setDate(Date date) {
@@ -267,11 +258,6 @@ public class Article {
         return ID;
     }
 
-    public SimpleStringProperty titleProperty() {
-        return this.titleProperty;
-    }
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        propertySupport.addPropertyChangeListener(listener);
-    }
+
 }
