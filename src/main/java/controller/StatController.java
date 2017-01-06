@@ -23,8 +23,9 @@ public class StatController {
         AI.addArticles(list);
         System.out.println("Articles ajoutés !");
         
-        System.out.println(AI.getNbDocTerm(new Term(ArticleAttributes.DESCRIPTION, "comme")) );
-        System.out.println(AI.getFreqTerm(new Term(ArticleAttributes.DESCRIPTION, "comme")) );
+        System.out.println(AI.getNbDocTerm(new Term(ArticleAttributes.DESCRIPTION, "union")) );
+        System.out.println(AI.getFreqTerm(new Term(ArticleAttributes.DESCRIPTION, "union")) );
+      //  AI.runAnalysis();
         System.out.println(AI.getTopFreq(5));
 
 	}

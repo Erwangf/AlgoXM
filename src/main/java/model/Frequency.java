@@ -4,7 +4,9 @@ package model;
  * Created by Erwan on 06/01/2017.
  */
 public class Frequency  {
-    private String word;
+    
+
+	private String word;
     private int frequency;
 
     public Frequency(String word, int frequency) {
@@ -27,4 +29,9 @@ public class Frequency  {
     public void setFrequency(int frequency) {
         this.frequency = frequency;
     }
+    
+   
+	public String toString() {
+		return "[word=" + word + ", frequency=" + frequency + "]";
+	}
 }

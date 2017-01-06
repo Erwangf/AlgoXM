@@ -28,6 +28,7 @@ public class ArticleIndex {
     private IndexWriterConfig config;
     private Analyzer analyzer;
     private IndexWriter indexWriter;
+    private List<Frequency> frequence = new ArrayList<>() ;
 
 
     public static void main(String[] args) throws IOException, ParseException {
@@ -459,45 +460,15 @@ public class ArticleIndex {
 
     }
 
-
     /**
-     * renvoie la liste des XX mots les plus fréquents avec leur fréquence d'apparition
+     * charge tous les mots utilisés avec leur fréquence d'apparition
      *
-     * @param top Le nombre de mots à récupérer
-     * @return une liste Mot/fréquence
      * @throws IOException En cas d'erreur avec l'Index
      */
-    public List<Frequency> getTopFreq(int top) throws IOException {
-
-        // Ajout des entrées de la map à une liste
-        final List<Frequency> entries = new ArrayList<>();
-        for (Entry<String, Integer> entry : getAllFreq().entrySet()) {
-            entries.add(new Frequency(entry.getKey(), entry.getValue()));
-        }
-
-        // Tri de la liste sur la valeur
-        Collections.sort(entries, new Comparator<Frequency>() {
-            public int compare(final Frequency e1, final Frequency e2) {
-                return e2.getFrequency() - e1.getFrequency();
-            }
-        });
-
-        //on garde seulement les XX premiers
-        return doTop(entries, top);
-
-    }
-
-
-    /**
-     * renvoie tous les mots utilisés avec leur fréquence d'apparition
-     *
-     * @return une Hashmap String/int - Mot/fréquence
-     * @throws IOException En cas d'erreur avec l'Index
-     */
-    public Map<String, Integer> getAllFreq() throws IOException {
+    public void runAnalysis() throws IOException {
         IndexReader reader = DirectoryReader.open(index);
         int num_doc = reader.numDocs();
-        Map<String, Integer> tfm = new HashMap<>();
+        Frequency oneFreq;
 
         for (int docNum = 0; docNum < num_doc; docNum++) {
 
@@ -514,15 +485,47 @@ public class ArticleIndex {
                     Term termInstance = new Term(ArticleAttributes.DESCRIPTION, term);
                     long termFreq = reader.totalTermFreq(termInstance);
 
-                    tfm.put(termText, (int) termFreq);
-
+                    oneFreq = new Frequency(termText, (int) termFreq);
+                    
+                    frequence.add(oneFreq);
+                    
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
-        return tfm;
+
     }
+
+    
+    /**
+     * renvoie la liste des XX mots les plus fréquents avec leur fréquence d'apparition
+     *
+     * @param top Le nombre de mots à récupérer
+     * @return une liste Mot/fréquence
+     * @throws IOException En cas d'erreur avec l'Index
+     */
+    public List<Frequency> getTopFreq(int top) throws IOException {
+    	
+    	//on vérifie si la liste n'a pas déjà été chargée
+    	if (frequence.size()==0){
+    		runAnalysis();
+            }
+    	 
+        // Tri de la liste sur la valeur
+        Collections.sort(frequence, new Comparator<Frequency>() {
+            public int compare(final Frequency e1, final Frequency e2) {
+                return e2.getFrequency() - e1.getFrequency();
+            }
+        });
+        
+
+        //on garde seulement les XX premiers
+        return doTop(frequence, top);
+
+    }
+    
+
 
 
     /**
@@ -538,6 +541,8 @@ public class ArticleIndex {
     }
 
 
+    
+    
     public ArrayList<Article> getFirstArticles(int nb) {
         try {
             return search("*:*",nb);
@@ -546,4 +551,16 @@ public class ArticleIndex {
             return new ArrayList<>();
         }
     }
+    
+    
+   
+
+    
+
+    
+    
+    
+    
+    
+    
 }
