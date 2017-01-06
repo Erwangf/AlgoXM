@@ -19,7 +19,6 @@ import org.apache.lucene.util.BytesRef;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.Map.Entry;
 
 import static org.apache.lucene.analysis.fr.FrenchAnalyzer.DEFAULT_ARTICLES;
 
@@ -258,6 +257,9 @@ public class ArticleIndex {
      * @return Une requête, au format String
      */
     private String buildQueryFromHashMap(HashMap<String, String> mapTermValue) {
+        if(mapTermValue.size()==0){
+            return "*:*";
+        }
         String strQuery = "";
         Iterator<Map.Entry<String, String>> iterator = mapTermValue.entrySet().iterator();
         boolean first = true;
