@@ -39,6 +39,7 @@ public class ArticleListPane extends BorderPane {
     private final DatePicker datePickerDebut = new DatePicker();
     private final DatePicker datePickerFin = new DatePicker();
     private final CheckBox useDateCB = new CheckBox("Filtrer sur la période");
+    private final TextField limitField;
 
     public ArticleListPane(MainGUI mainGUI) {
         super();
@@ -154,6 +155,10 @@ public class ArticleListPane extends BorderPane {
 
         Label toLabel = new Label("A :");
 
+        Label limitLabel = new Label("Nombre de résultats");
+        limitField = new TextField("100");
+
+
 
 
         Button buttonSearch = new Button("Rechercher");
@@ -228,8 +233,14 @@ public class ArticleListPane extends BorderPane {
         GridPane.setConstraints(useDateCB, 0, 15);
         filterPane.getChildren().add(useDateCB);
 
+        GridPane.setConstraints(limitLabel, 0, 16);
+        filterPane.getChildren().add(limitLabel);
 
-        GridPane.setConstraints(buttonSearch, 0, 16);
+        GridPane.setConstraints(limitField, 1, 16);
+        filterPane.getChildren().add(limitField);
+
+
+        GridPane.setConstraints(buttonSearch, 0, 17);
         filterPane.getChildren().add(buttonSearch);
         buttonSearch.setOnAction((e) -> switchtrie());
 
@@ -239,7 +250,11 @@ public class ArticleListPane extends BorderPane {
     }
 
 
+
     public void switchtrie() {
+
+        this.nbArticle = Integer.parseInt(this.limitField.getText());
+
 
         try {
             if (searchMode.equals("criteria")) {
@@ -281,7 +296,10 @@ public class ArticleListPane extends BorderPane {
             e.printStackTrace();
             setArticles(new ArrayList<>());
 
+
         }
+
+        this.list.forEach(this.mainGUI.currentArticles::add);
 
     }
 

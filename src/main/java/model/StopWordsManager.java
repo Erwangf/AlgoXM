@@ -15,7 +15,7 @@ public class StopWordsManager {
     static String path = "frenchstopwords.csv";
 	
     /**
-     * Crée une arrayList de stopwords Français à paritr du'n fichier csv
+     * Crée une arrayList de stopwords Français à paritr d'un fichier csv
      * 
      * @return une ArrayList de String contenant les stopwords du fichiers
      */
@@ -35,11 +35,5 @@ public class StopWordsManager {
             return sw;
 
         }
-        
-	/*
-	 public static void main(String[] args) {
-	    	
-	    	System.out.println(getFrenchStopWords() );
-	    }
-	*/
+
 }

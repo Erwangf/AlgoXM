@@ -147,7 +147,7 @@ public class IOController {
      */
     public static String artToString(Article a) {
         String oneLine = delimitor + a.getTitle() + delimitor + separator + delimitor + a.getDescription() + delimitor + separator
-                + delimitor + sdf.format(a.getDate()) + delimitor + separator + delimitor + a.getRss() + delimitor + separator
+                + delimitor + (a.getDate()!=null?sdf.format(a.getDate()):"") + delimitor + separator + delimitor + a.getRss() + delimitor + separator
                 + delimitor + a.getAuthor() + delimitor + separator + delimitor + a.getLink() + delimitor;
         return oneLine;
     }
