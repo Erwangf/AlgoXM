@@ -11,11 +11,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.GridPane;
+import model.Frequency;
 import view.MainGUI;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Created by Erwan on 29/12/2016.
@@ -26,8 +26,8 @@ public class WordCloudPane extends GridPane {
     private final WordCloudController controller;
     private int nbKeywordsOnCloud = 100;
     private int nbKeywordsFreq = 20;
-    private final TableView<Map.Entry<String, Integer>> tableView;
-    private ObservableList<Map.Entry<String, Integer>> data = FXCollections.observableList(new ArrayList<>());
+    private final TableView<Frequency> tableView;
+    private ObservableList<Frequency> data = FXCollections.observableList(new ArrayList<>());
 
 
     public WordCloudPane(MainGUI mainGUI) {
@@ -35,12 +35,12 @@ public class WordCloudPane extends GridPane {
         this.controller = new WordCloudController(mainGUI.index);
         tableView = new TableView<>();
 
-        TableColumn<Map.Entry<String,Integer>,String> wordCol = new TableColumn<>("Nom");
-        wordCol.setCellValueFactory(f->new SimpleStringProperty(f.getValue().getKey()));
+        TableColumn<Frequency,String> wordCol = new TableColumn<>("Nom");
+        wordCol.setCellValueFactory(f->new SimpleStringProperty(f.getValue().getWord()));
         wordCol.setSortable(false);
 
-        TableColumn<Map.Entry<String,Integer>,Integer> freqCol = new TableColumn<>("Nombre de récurence");
-        freqCol.setCellValueFactory(f->new SimpleIntegerProperty(f.getValue().getValue()).asObject());
+        TableColumn<Frequency,Integer> freqCol = new TableColumn<>("Nombre de récurence");
+        freqCol.setCellValueFactory(f->new SimpleIntegerProperty(f.getValue().getFrequency()).asObject());
         freqCol.setSortable(false);
 
         tableView.getColumns().addAll(freqCol, wordCol);
@@ -80,7 +80,7 @@ public class WordCloudPane extends GridPane {
 
     public void loadFreqs(){
         data.clear();
-        controller.getTopFrequencies(nbKeywordsFreq).entrySet().forEach(data::add);
+        data.addAll(controller.getTopFreq(nbKeywordsFreq));
     }
 
 

@@ -1,12 +1,13 @@
 package controller;
 
-import model.Article;
-import model.ArticleAttributes;
-import model.SortableAttributes;
-import model.StopWordsManager;
+import model.*;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.LowerCaseFilter;
+import org.apache.lucene.analysis.StopFilter;
+import org.apache.lucene.analysis.standard.StandardFilter;
+import org.apache.lucene.analysis.standard.StandardTokenizer;
+import org.apache.lucene.analysis.util.ElisionFilter;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.*;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -19,6 +20,8 @@ import org.apache.lucene.util.BytesRef;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
+
+import static org.apache.lucene.analysis.fr.FrenchAnalyzer.DEFAULT_ARTICLES;
 
 public class ArticleIndex {
     private Directory index;
@@ -106,11 +109,20 @@ public class ArticleIndex {
 
 
         ArrayList<String> stopWordsList = StopWordsManager.getFrenchStopWords();
-
-
         // 1. On spécifie un analyzer
-        CharArraySet stopWordsSet = new CharArraySet(stopWordsList,true);
-        analyzer = new StandardAnalyzer(stopWordsSet);
+        CharArraySet stopWordsSet = new CharArraySet(stopWordsList, true);
+        analyzer = new Analyzer() {
+
+            protected TokenStreamComponents createComponents(String fieldName) {
+                StandardTokenizer source = new StandardTokenizer();
+                StandardFilter result = new StandardFilter(source);
+                ElisionFilter result2 = new ElisionFilter(result, DEFAULT_ARTICLES);
+                LowerCaseFilter result3 = new LowerCaseFilter(result2);
+                StopFilter result4 = new StopFilter(result3, stopWordsSet);
+
+                return new TokenStreamComponents(source, result4);
+            }
+        };
         // 2. On crée l'index (Directory)
         index = new RAMDirectory();
 
@@ -408,6 +420,11 @@ public class ArticleIndex {
 
     }
 
+    /**
+     * Retourne un résultat de recherche par défaut
+     *
+     * @return une ArrayList d'Article
+     */
     public ArrayList<Article> getDefaultResult() {
         try {
             return this.search("*:*", 100);
@@ -451,15 +468,18 @@ public class ArticleIndex {
      * @return une liste Mot/fréquence
      * @throws IOException En cas d'erreur avec l'Index
      */
-    public List<Entry<String, Integer>> getTopFreq(int top) throws IOException {
+    public List<Frequency> getTopFreq(int top) throws IOException {
 
         // Ajout des entrées de la map à une liste
-        final List<Entry<String, Integer>> entries = new ArrayList<Entry<String, Integer>>(getAllFreq().entrySet());
+        final List<Frequency> entries = new ArrayList<>();
+        for (Entry<String, Integer> entry : getAllFreq().entrySet()) {
+            entries.add(new Frequency(entry.getKey(), entry.getValue()));
+        }
 
         // Tri de la liste sur la valeur
-        Collections.sort(entries, new Comparator<Entry<String, Integer>>() {
-            public int compare(final Entry<String, Integer> e1, final Entry<String, Integer> e2) {
-                return e2.getValue().compareTo(e1.getValue());
+        Collections.sort(entries, new Comparator<Frequency>() {
+            public int compare(final Frequency e1, final Frequency e2) {
+                return e2.getFrequency() - e1.getFrequency();
             }
         });
 
@@ -483,7 +503,7 @@ public class ArticleIndex {
         for (int docNum = 0; docNum < num_doc; docNum++) {
 
             Terms termVector = reader.getTermVector(docNum, ArticleAttributes.DESCRIPTION);
-            if(termVector==null){
+            if (termVector == null) {
                 continue;
             }
             TermsEnum itr = termVector.iterator();
@@ -513,8 +533,8 @@ public class ArticleIndex {
      * @param top      le nombre d'entrées à garder
      * @return une liste Mot/fréquence topée
      */
-    public List<Entry<String, Integer>> doTop(List<Entry<String, Integer>> fullList, int top) {
-        if(top>fullList.size()) return new ArrayList<>();
+    private List<Frequency> doTop(List<Frequency> fullList, int top) {
+        if (top > fullList.size()) return fullList;
         else return new ArrayList<>(fullList.subList(0, top));
     }
 

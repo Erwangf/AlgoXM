@@ -7,6 +7,7 @@ import com.kennycason.kumo.bg.CircleBackground;
 import com.kennycason.kumo.font.scale.SqrtFontScalar;
 import com.kennycason.kumo.nlp.FrequencyAnalyzer;
 import com.kennycason.kumo.palette.ColorPalette;
+import model.Frequency;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 public class WordCloudController {
 
     private ArticleIndex index;
-    private List<Map.Entry<String, Integer>> freq;
+    private List<Frequency> freq;
 
     public WordCloudController(ArticleIndex index) {
         this.index = index;
@@ -37,35 +38,21 @@ public class WordCloudController {
         }
     }
 
-    private List<Map.Entry<String, Integer>> getTopFreq(int nb) {
+    public List<Frequency> getTopFreq(int nb) {
         if (this.freq == null || freq.size() < nb) {
             refreshFreq(nb);
         }
-        return this.freq
-                .stream() // passage en stream pour modifier la liste
-                .sorted((o1, o2) -> -(o2.getValue() - o1.getValue())) //tri des fréquences par nombre d'occurences, décroissant ( grace au - )
-                .limit(nb) // on ne récupère que les nb premières fréquences
-                .collect(Collectors.toList());
+        return this.freq.subList(0,nb);
     }
 
     private List<WordFrequency> getTopWordFreqArray(int nb) {
 
         return getTopFreq(nb) //on récupère une liste <Mot,NbOccurence> triée par ordre décroissant en nombre d'occurence
                 .stream()  // passage en stream pour modifier la liste
-                .map(freq -> new WordFrequency(freq.getKey(), freq.getValue())) //convertisseur Map.Entry en WordFrequency
+                .map(freq -> new WordFrequency(freq.getWord(), freq.getFrequency())) //convertisseur Map.Entry en WordFrequency
                 .collect(Collectors.toCollection(ArrayList::new)); //On récupère les données, et on les stoque dans une collection, de constructeur ArrayList
     }
 
-    public HashMap<String, Integer> getTopFrequencies(int nb) {
-
-
-        HashMap<String, Integer> result = new HashMap<>();
-        for (Map.Entry<String, Integer> entry : getTopFreq(nb)) {
-            result.put(entry.getKey(), entry.getValue());
-        }
-        return result;
-
-    }
 
     public BufferedImage getWordCloudImage(int nb) {
         final FrequencyAnalyzer frequencyAnalyzer = new FrequencyAnalyzer();
