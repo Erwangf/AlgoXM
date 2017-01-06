@@ -42,7 +42,7 @@ public class WordCloudController {
         if (this.freq == null || freq.size() < nb) {
             refreshFreq(nb);
         }
-        return this.freq.subList(0,nb);
+        return this.freq.subList(0,Math.min(freq.size(),nb));
     }
 
     private List<WordFrequency> getTopWordFreqArray(int nb) {
@@ -63,7 +63,7 @@ public class WordCloudController {
         wordCloud.setBackgroundColor(new Color(0xF4F4F4));
         wordCloud.setBackground(new CircleBackground(300));
         wordCloud.setColorPalette(new ColorPalette(new Color(0x4055F1), new Color(0x408DF1), new Color(0x40AAF1), new Color(0x40C5F1), new Color(0x40D3F1), new Color(0xAF18BB)));
-        wordCloud.setFontScalar(new SqrtFontScalar(10, 80));
+        wordCloud.setFontScalar(new SqrtFontScalar(5, 60));
         wordCloud.build(wordFrequencies);
         return wordCloud.getBufferedImage();
     }

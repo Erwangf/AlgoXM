@@ -24,7 +24,7 @@ public class WordCloudPane extends GridPane {
 
     private final MainGUI mainGUI;
     private final WordCloudController controller;
-    private int nbKeywordsOnCloud = 100;
+    private int nbKeywordsOnCloud = 200;
     private int nbKeywordsFreq = 20;
     private final TableView<Frequency> tableView;
     private ObservableList<Frequency> data = FXCollections.observableList(new ArrayList<>());
