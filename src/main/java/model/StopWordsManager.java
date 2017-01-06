@@ -1,11 +1,10 @@
 package model;
 
-import java.io.FileInputStream;
+import com.opencsv.CSVReader;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-
-import com.opencsv.CSVReader;
 
 
 
@@ -13,7 +12,7 @@ public class StopWordsManager {
 
 	
     static CSVReader reader = null;
-    static String path = "./data/frenchstopwords.csv";
+    static String path = "frenchstopwords.csv";
 	
     /**
      * Crée une arrayList de stopwords Français à paritr du'n fichier csv
@@ -22,9 +21,9 @@ public class StopWordsManager {
      */
 	public static ArrayList<String> getFrenchStopWords() {
         ArrayList<String> sw = new ArrayList<>();
-	
+	    ClassLoader classLoader = new Object() { }.getClass().getClassLoader();
               try {
-                reader = new CSVReader(new InputStreamReader(new FileInputStream(path), "UTF-8"));
+                reader = new CSVReader(new InputStreamReader(classLoader.getResourceAsStream(path)));
                 String[] fileLine;
                 while ((fileLine = reader.readNext()) != null) {
                     sw.add(fileLine[0]);

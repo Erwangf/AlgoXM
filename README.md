@@ -1,7 +1,7 @@
 <img src="./images/logo-lyon2.png" width=100 align=right>
 <br>
 
-# AlgoXM v0.3
+# AlgoXM v0.4
 
 
 AlgoXM est un projet de visualisation d'articles, ayant pour contexte le cours d'Algorithme
